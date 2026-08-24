@@ -1,0 +1,43 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="KeyFXBoard.App.FirstRunWindow"
+        Title="Welcome — Key FX Board"
+        Icon="/Assets/app.ico"
+        Width="480"
+        Height="460"
+        MinWidth="420"
+        MinHeight="420"
+        WindowStartupLocation="CenterScreen"
+        CanResize="False"
+        TransparencyLevelHint="Mica,AcrylicBlur,None"
+        Background="#CC1C1C1C"
+        KeyDown="OnKeyDown">
+  <DockPanel Margin="28">
+    <Button DockPanel.Dock="Bottom"
+            x:Name="DoneButton"
+            Content="Done"
+            HorizontalAlignment="Right"
+            MinWidth="96"
+            Click="OnDone"/>
+    <StackPanel Spacing="12">
+      <TextBlock Text="Key FX Board"
+                 FontSize="24"
+                 FontWeight="SemiBold"/>
+      <TextBlock Text="You’ll hear a click as you type in any window. Mute anytime from the tray."
+                 TextWrapping="Wrap"
+                 Opacity="0.85"/>
+      <TextBlock Text="We do not record, store, or send what you type. The keyboard hook exists only to play a sound."
+                 TextWrapping="Wrap"
+                 Opacity="0.85"/>
+      <TextBlock Text="Sounds will not play in Administrator windows."
+                 TextWrapping="Wrap"
+                 Opacity="0.7"/>
+      <CheckBox x:Name="AutostartBox"
+                Content="Start with Windows"
+                Margin="0,8,0,0"/>
+      <Button Content="Open getting started guide"
+              HorizontalAlignment="Left"
+              Click="OnOpenGuide"/>
+    </StackPanel>
+  </DockPanel>
+</Window>

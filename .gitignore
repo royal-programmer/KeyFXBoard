@@ -1,0 +1,16 @@
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.vs/
+.idea/
+*.DotSettings.user
+[Tt]humbs.db
+*.nupkg
+artifacts/
+publish/
+*.log

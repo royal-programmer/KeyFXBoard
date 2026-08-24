@@ -1,0 +1,25 @@
+Third-party notices — Key FX Board
+=================================
+
+This product includes software from the following projects. Licenses are
+summarized; full license texts are available from each project.
+
+Avalonia
+  https://github.com/AvaloniaUI/Avalonia
+  License: MIT
+
+NAudio
+  https://github.com/naudio/NAudio
+  License: MIT
+
+Velopack
+  https://github.com/velopack/velopack
+  License: MIT
+
+.NET runtime and libraries
+  https://github.com/dotnet/runtime
+  License: MIT
+
+Factory click and piano samples in this app are synthesized by Key FX Board
+and licensed CC0-1.0 (public domain dedication) unless a pack manifest says
+otherwise. User custom samples remain the user’s files.

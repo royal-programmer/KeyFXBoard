@@ -1,0 +1,25 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="KeyFXBoard.App.UnsavedChangesDialog"
+        Title="Unsaved changes"
+        Icon="/Assets/app.ico"
+        Width="460"
+        SizeToContent="Height"
+        CanResize="False"
+        WindowStartupLocation="CenterOwner"
+        TransparencyLevelHint="Mica,AcrylicBlur,None"
+        Background="#CC1C1C1C">
+  <DockPanel Margin="24">
+    <StackPanel DockPanel.Dock="Bottom"
+                Orientation="Horizontal"
+                HorizontalAlignment="Right"
+                Spacing="8"
+                Margin="0,16,0,0">
+      <Button Content="Cancel" MinWidth="88" Click="OnCancel"/>
+      <Button Content="Discard" MinWidth="88" Click="OnDiscard"/>
+      <Button x:Name="SaveAsButton" Content="Save as" MinWidth="88" Click="OnSaveAs"/>
+      <Button x:Name="SaveButton" Content="Save" MinWidth="88" Click="OnSave"/>
+    </StackPanel>
+    <TextBlock x:Name="BodyText" TextWrapping="Wrap"/>
+  </DockPanel>
+</Window>

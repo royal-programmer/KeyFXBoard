@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <AssemblyName>KeyFXBoard</AssemblyName>
+    <RootNamespace>KeyFXBoard.App</RootNamespace>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\app.ico</ApplicationIcon>
+    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+  </PropertyGroup>
+  <ItemGroup>
+    <AvaloniaResource Include="Assets\**" />
+    <None Include="..\..\LICENSE.txt" Link="LICENSE.txt" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\THIRD_PARTY_NOTICES.txt" Link="THIRD_PARTY_NOTICES.txt" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\installer\GettingStarted.html" Link="GettingStarted.html" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="11.3.14" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.3.14" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.14" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.14" />
+    <PackageReference Include="Velopack" Version="1.2.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\KeyFXBoard.Core\KeyFXBoard.Core.csproj" />
+    <ProjectReference Include="..\KeyFXBoard.Windows\KeyFXBoard.Windows.csproj" />
+  </ItemGroup>
+</Project>

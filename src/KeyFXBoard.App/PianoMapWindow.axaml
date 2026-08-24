@@ -1,0 +1,53 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="KeyFXBoard.App.PianoMapWindow"
+        Title="Piano map"
+        Icon="/Assets/app.ico"
+        Width="1040"
+        Height="420"
+        MinWidth="760"
+        MinHeight="340"
+        WindowStartupLocation="CenterScreen"
+        TransparencyLevelHint="Mica,AcrylicBlur,None"
+        Background="#CC1C1C1C">
+  <DockPanel Margin="20,16,20,16">
+    <DockPanel DockPanel.Dock="Top" Margin="0,0,0,12">
+      <CheckBox x:Name="StayOnTopBox"
+                DockPanel.Dock="Right"
+                Content="Stay on top"
+                IsChecked="True"
+                VerticalAlignment="Center"/>
+      <TextBlock Text="Piano map"
+                 FontSize="22"
+                 FontWeight="SemiBold"
+                 VerticalAlignment="Center"/>
+    </DockPanel>
+    <TextBlock x:Name="HintText"
+               DockPanel.Dock="Top"
+               Opacity="0.8"
+               TextWrapping="Wrap"
+               Margin="0,0,0,10"
+               Text="Each piano key shows the computer key that plays it at the current octave. Page Down / Page Up shift the whole map. Home / End return to A-row = C4. Click a key to hear it."/>
+    <StackPanel DockPanel.Dock="Bottom" Spacing="8" Margin="0,12,0,0">
+      <StackPanel Orientation="Horizontal" Spacing="16">
+        <TextBlock x:Name="OctaveHint" Opacity="0.85"/>
+        <TextBlock Text="Page Down  −1" Opacity="0.85"/>
+        <TextBlock Text="Page Up  +1" Opacity="0.85"/>
+        <TextBlock Text="Home / End  default" Opacity="0.85"/>
+        <TextBlock Text="Range C2–C6" Opacity="0.55"/>
+      </StackPanel>
+      <Button Content="Close"
+              HorizontalAlignment="Right"
+              MinWidth="88"
+              Click="OnClose"/>
+    </StackPanel>
+    <Border Background="#22000000"
+            CornerRadius="8"
+            Padding="12,16"
+            ClipToBounds="True">
+      <Viewbox Stretch="Uniform">
+        <Canvas x:Name="KeyboardCanvas"/>
+      </Viewbox>
+    </Border>
+  </DockPanel>
+</Window>
