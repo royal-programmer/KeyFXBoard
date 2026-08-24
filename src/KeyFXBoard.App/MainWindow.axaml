@@ -1,0 +1,573 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="KeyFXBoard.App.MainWindow"
+        Title="Key FX Board"
+        Icon="/Assets/app.ico"
+        Width="820"
+        Height="560"
+        MinWidth="680"
+        MinHeight="460"
+        WindowStartupLocation="CenterScreen"
+        TransparencyLevelHint="Mica,AcrylicBlur,None"
+        Background="#CC1C1C1C"
+        Closing="OnClosing">
+  <DockPanel>
+    <Border DockPanel.Dock="Top"
+            x:Name="ErrorBanner"
+            IsVisible="False"
+            Background="#55B3261E"
+            Padding="16,10">
+      <TextBlock x:Name="ErrorBannerText"
+                 TextWrapping="Wrap"/>
+    </Border>
+
+    <ListBox x:Name="Nav"
+             DockPanel.Dock="Left"
+             Width="168"
+             Margin="12,16,0,16"
+             SelectionChanged="OnNavChanged">
+      <ListBoxItem Content="Home" Tag="home" IsSelected="True"/>
+      <ListBoxItem Content="Instruments" Tag="instruments"/>
+      <ListBoxItem Content="Profiles" Tag="profiles"/>
+      <ListBoxItem Content="Effects" Tag="fx"/>
+      <ListBoxItem Content="Behavior" Tag="behavior"/>
+      <ListBoxItem Content="Packs" Tag="packs"/>
+      <ListBoxItem Content="Settings" Tag="settings"/>
+      <ListBoxItem Content="About" Tag="about"/>
+    </ListBox>
+
+    <ScrollViewer Margin="20,20,24,20">
+      <Panel>
+        <StackPanel x:Name="HomePage" Spacing="12">
+          <TextBlock Text="Home" FontSize="26" FontWeight="SemiBold"/>
+          <TextBlock Text="Type anywhere. Chords and fast typing each get their own voice — up to 24 at once."
+                     Opacity="0.8"
+                     TextWrapping="Wrap"/>
+          <StackPanel Orientation="Horizontal" Spacing="16" Margin="0,8,0,0">
+            <CheckBox x:Name="MuteBox" Content="Mute" ToolTip.Tip="Silence all output without changing your volume sliders."/>
+            <TextBlock Text="Volume" VerticalAlignment="Center" ToolTip.Tip="App loudness. This sits on top of the profile’s room volume."/>
+            <Slider x:Name="VolumeSlider" Minimum="0" Maximum="100" Width="160" VerticalAlignment="Center"
+                    ToolTip.Tip="App loudness. This sits on top of the profile’s room volume."/>
+            <TextBlock x:Name="VolumeLabel" VerticalAlignment="Center"/>
+            <TextBlock Text="Boost" VerticalAlignment="Center" ToolTip.Tip="Extra gain past 100%. Use this when the laptop and app are already maxed. The limiter still catches peaks."/>
+            <Slider x:Name="BoostSlider" Minimum="0" Maximum="18" Width="120" VerticalAlignment="Center"
+                    ToolTip.Tip="Extra gain past 100%. Use this when the laptop and app are already maxed. The limiter still catches peaks."/>
+            <TextBlock x:Name="BoostLabel" VerticalAlignment="Center"/>
+          </StackPanel>
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Text="Velocity variation" VerticalAlignment="Center"
+                       ToolTip.Tip="Random loudness per key so chords and fast typing don’t sound like one cloned hit."/>
+            <Slider x:Name="VelocitySlider" Minimum="0" Maximum="50" Width="160" VerticalAlignment="Center"
+                    ToolTip.Tip="Random loudness per key so chords and fast typing don’t sound like one cloned hit."/>
+            <TextBlock x:Name="VelocityLabel" VerticalAlignment="Center"/>
+          </StackPanel>
+          <TextBlock Text="A little randomness so stacked keys don’t sound like one cloned click."
+                     Opacity="0.65"
+                     TextWrapping="Wrap"/>
+          <TextBlock x:Name="HookStatus"/>
+          <TextBlock x:Name="AudioStatus"/>
+          <TextBlock Text="Output"/>
+          <ComboBox x:Name="HomeOutputBox" Width="360" HorizontalAlignment="Left"/>
+          <TextBlock Text="Only plugged-in devices are listed. Plug in a headset and it appears here; Windows default follows the new default device."
+                     Opacity="0.6"
+                     TextWrapping="Wrap"/>
+          <TextBlock x:Name="ElevationNote"
+                     Opacity="0.7"
+                     TextWrapping="Wrap"/>
+          <TextBlock x:Name="ActivePackLabel"
+                     Opacity="0.85"
+                     TextWrapping="Wrap"
+                     Margin="0,8,0,0"/>
+          <TextBlock Text="Switch profiles on Profiles. Effects and Behavior stay live until you Save. Installed packs stay on disk — only this profile’s packs are preloaded."
+                     Opacity="0.6"
+                     TextWrapping="Wrap"/>
+          <TextBlock x:Name="OctaveLabel"
+                     FontWeight="SemiBold"
+                     Margin="0,8,0,0"/>
+          <StackPanel x:Name="PianoOnBanner" Spacing="8" Margin="0,12,0,0" IsVisible="False">
+            <TextBlock Text="Piano is on" FontWeight="SemiBold"/>
+            <TextBlock Text="The map can close; piano keeps playing until you Stop."
+                       Opacity="0.75"
+                       TextWrapping="Wrap"/>
+            <Button Content="Stop piano" HorizontalAlignment="Left" Click="OnStopPiano"/>
+          </StackPanel>
+        </StackPanel>
+
+        <StackPanel x:Name="InstrumentsPage" Spacing="12" IsVisible="False">
+          <TextBlock Text="Instruments" FontSize="26" FontWeight="SemiBold"/>
+          <TextBlock Text="Piano"
+                     FontSize="18"
+                     FontWeight="SemiBold"/>
+          <TextBlock x:Name="InstrumentsStatus"
+                     Opacity="0.8"
+                     TextWrapping="Wrap"
+                     Text="Start piano to play the computer keyboard as an instrument. Your profile packs stay until you Stop. Closing the map does not stop piano."/>
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <Button x:Name="InstrumentsToggleButton" Content="Start piano" Click="OnTogglePiano"/>
+            <Button Click="OnOpenPianoMap" Content="Open piano map"
+                    ToolTip.Tip="Show which computer key plays each piano note"/>
+          </StackPanel>
+          <TextBlock Text="Z-row C3, A-row C4, Q-row C5. Page Down / Page Up shift an octave. Home / End return to A-row = C4. Range C2–C6."
+                     Opacity="0.7"
+                     TextWrapping="Wrap"/>
+        </StackPanel>
+
+        <StackPanel x:Name="ProfilesPage" Spacing="12" IsVisible="False">
+          <TextBlock Text="Profiles" FontSize="26" FontWeight="SemiBold"/>
+          <TextBlock Text="A profile is a saved setup of packs and effects. System templates cannot be overwritten — Save as on Effects keeps a copy. Duplicate, Rename, and Reset live on each card."
+                     Opacity="0.8"
+                     TextWrapping="Wrap"/>
+          <StackPanel x:Name="ProfileRows" Spacing="8"/>
+          <TextBlock Text="Active profile packs" FontWeight="SemiBold" Margin="0,8,0,0"/>
+          <TextBlock x:Name="ProfileEditHint" Opacity="0.7" TextWrapping="Wrap"/>
+          <TextBlock Text="Primary pack" ToolTip.Tip="The sound library used for most keys."/>
+          <ComboBox x:Name="PrimaryPackBox" Width="360" HorizontalAlignment="Left"
+                    ToolTip.Tip="The sound library used for most keys."/>
+          <TextBlock Text="Special-key overlay pack (Enter, Escape, Space)"
+                     ToolTip.Tip="Optional second pack used only on Enter, Escape, and Space."/>
+          <ComboBox x:Name="OverlayPackBox" Width="360" HorizontalAlignment="Left"
+                    ToolTip.Tip="Optional second pack used only on Enter, Escape, and Space."/>
+          <StackPanel x:Name="CustomSoundPanel" Spacing="8" IsVisible="False">
+            <TextBlock Text="Custom sound"
+                       ToolTip.Tip="Which file from your custom folder plays. Same file is used wherever Custom sample is assigned."/>
+            <ComboBox x:Name="CustomSoundBox" Width="360" HorizontalAlignment="Left"
+                      ToolTip.Tip="Which file from your custom folder plays. Same file is used wherever Custom sample is assigned."/>
+            <TextBlock Text="Files live in the custom folder on Packs. This choice is remembered for the app, not per profile."
+                       Opacity="0.65"
+                       TextWrapping="Wrap"/>
+          </StackPanel>
+        </StackPanel>
+
+        <StackPanel x:Name="FxPage" Spacing="10" IsVisible="False">
+          <TextBlock Text="Effects" FontSize="26" FontWeight="SemiBold"/>
+          <TextBlock x:Name="FxProfileName" FontSize="16" FontWeight="SemiBold"/>
+          <TextBlock x:Name="FxHint"
+                     Opacity="0.75"
+                     TextWrapping="Wrap"
+                     Text="Each module has an on/off. Child knobs only work when the module is on. Type to hear the change."/>
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <Button x:Name="SaveButton" Content="Save" Click="OnSaveWorking"
+                    ToolTip.Tip="Write the whole profile: packs, behavior, and effects."/>
+            <Button x:Name="SaveAsButton" Content="Save as" Click="OnSaveWorkingAs"
+                    ToolTip.Tip="Copy this setup to a new user profile."/>
+            <Button x:Name="ResetButton" Content="Reset" Click="OnResetActive"
+                    ToolTip.Tip="Restore this profile to the last save (or the shipped default for system templates)."/>
+          </StackPanel>
+          <TextBlock Text="Virtual room" ToolTip.Tip="A starting FX template. Changing it replaces the current effect settings for this profile."/>
+          <ComboBox x:Name="FxRoomBox" Width="280" HorizontalAlignment="Left"
+                    ToolTip.Tip="A starting FX template. Changing it replaces the current effect settings for this profile."/>
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Text="Room volume" VerticalAlignment="Center" Width="120"
+                       ToolTip.Tip="Loudness stored on this profile. Separate from the Home volume and Boost."/>
+            <Slider x:Name="RoomVolumeSlider" Minimum="0" Maximum="100" Width="220" VerticalAlignment="Center"
+                    ToolTip.Tip="Loudness stored on this profile. Separate from the Home volume and Boost."/>
+            <TextBlock x:Name="RoomVolumeLabel" VerticalAlignment="Center"/>
+          </StackPanel>
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Text="Input gain" VerticalAlignment="Center" Width="120"
+                       ToolTip.Tip="Raises or lowers the signal going into the effect chain, in decibels."/>
+            <Slider x:Name="InputGainSlider" Minimum="-12" Maximum="12" Width="220" VerticalAlignment="Center"
+                    ToolTip.Tip="Raises or lowers the signal going into the effect chain, in decibels."/>
+            <TextBlock x:Name="InputGainLabel" VerticalAlignment="Center"/>
+          </StackPanel>
+          <CheckBox x:Name="EqBox" Content="EQ"
+                    ToolTip.Tip="Two-band tone control. Bass is the low shelf; Air is the high shelf."/>
+          <StackPanel x:Name="EqChildren" Margin="20,0,0,0" Spacing="10">
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Text="Bass" VerticalAlignment="Center" Width="120"
+                       ToolTip.Tip="Low-shelf gain around 120 Hz. Raise for weight; cut if keys boom."/>
+            <Slider x:Name="BassSlider" Minimum="-12" Maximum="12" Width="220" VerticalAlignment="Center"
+                    ToolTip.Tip="Low-shelf gain around 120 Hz. Raise for weight; cut if keys boom."/>
+            <TextBlock x:Name="BassLabel" VerticalAlignment="Center"/>
+          </StackPanel>
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Text="Air" VerticalAlignment="Center" Width="120"
+                       ToolTip.Tip="High-shelf gain around 8 kHz. Raise for sparkle; cut if keys hiss."/>
+            <Slider x:Name="AirSlider" Minimum="-12" Maximum="12" Width="220" VerticalAlignment="Center"
+                    ToolTip.Tip="High-shelf gain around 8 kHz. Raise for sparkle; cut if keys hiss."/>
+            <TextBlock x:Name="AirLabel" VerticalAlignment="Center"/>
+          </StackPanel>
+          </StackPanel>
+          <CheckBox x:Name="DynBassBox" Content="Dynamic bass"
+                    ToolTip.Tip="Adds extra low end that follows how loud the keys are, not a static bass EQ."/>
+          <StackPanel x:Name="DynBassChildren" Margin="20,0,0,0" Spacing="10">
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Text="Intensity" VerticalAlignment="Center" Width="120"
+                       ToolTip.Tip="How much extra bass rides on top of loud hits."/>
+            <Slider x:Name="DynBassSlider" Minimum="0" Maximum="100" Width="220" VerticalAlignment="Center"
+                    ToolTip.Tip="How much extra bass rides on top of loud hits."/>
+            <TextBlock x:Name="DynBassLabel" VerticalAlignment="Center"/>
+          </StackPanel>
+          </StackPanel>
+          <CheckBox x:Name="CompBox" Content="Compressor"
+                    ToolTip.Tip="Evens out loud and quiet keys so chords don’t jump out as much."/>
+          <StackPanel x:Name="CompChildren" Margin="20,0,0,0" Spacing="10">
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Text="Threshold" VerticalAlignment="Center" Width="120"
+                       ToolTip.Tip="Level where compression starts. Lower means more keys get squeezed."/>
+            <Slider x:Name="ThresholdSlider" Minimum="-40" Maximum="0" Width="220" VerticalAlignment="Center"
+                    ToolTip.Tip="Level where compression starts. Lower means more keys get squeezed."/>
+            <TextBlock x:Name="ThresholdLabel" VerticalAlignment="Center"/>
+          </StackPanel>
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Text="Ratio" VerticalAlignment="Center" Width="120"
+                       ToolTip.Tip="How hard peaks are reduced once they pass the threshold."/>
+            <Slider x:Name="RatioSlider" Minimum="1" Maximum="8" Width="220" VerticalAlignment="Center"
+                    ToolTip.Tip="How hard peaks are reduced once they pass the threshold."/>
+            <TextBlock x:Name="RatioLabel" VerticalAlignment="Center"/>
+          </StackPanel>
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Text="Makeup" VerticalAlignment="Center" Width="120"
+                       ToolTip.Tip="Gain added after compression so the room does not get quieter overall."/>
+            <Slider x:Name="MakeupSlider" Minimum="0" Maximum="12" Width="220" VerticalAlignment="Center"
+                    ToolTip.Tip="Gain added after compression so the room does not get quieter overall."/>
+            <TextBlock x:Name="MakeupLabel" VerticalAlignment="Center"/>
+          </StackPanel>
+          </StackPanel>
+          <CheckBox x:Name="SatBox" Content="Saturation"
+                    ToolTip.Tip="Adds harmonic warmth or digital crunch. Use mix to keep it subtle."/>
+          <StackPanel x:Name="SatChildren" Margin="20,0,0,0" Spacing="10">
+          <ComboBox x:Name="SatStyleBox" Width="220" HorizontalAlignment="Left"
+                    ToolTip.Tip="Tape is round and warm. Crush is a harder, clipped edge.">
+            <ComboBoxItem Content="Tape" Tag="Tape"/>
+            <ComboBoxItem Content="Crush" Tag="Crush"/>
+          </ComboBox>
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Text="Drive" VerticalAlignment="Center" Width="120"
+                       ToolTip.Tip="How hard the saturator is pushed before the mix slider."/>
+            <Slider x:Name="DriveSlider" Minimum="0" Maximum="100" Width="220" VerticalAlignment="Center"
+                    ToolTip.Tip="How hard the saturator is pushed before the mix slider."/>
+            <TextBlock x:Name="DriveLabel" VerticalAlignment="Center"/>
+          </StackPanel>
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Text="Sat mix" VerticalAlignment="Center" Width="120"
+                       ToolTip.Tip="Blend of saturated vs clean signal."/>
+            <Slider x:Name="SatMixSlider" Minimum="0" Maximum="100" Width="220" VerticalAlignment="Center"
+                    ToolTip.Tip="Blend of saturated vs clean signal."/>
+            <TextBlock x:Name="SatMixLabel" VerticalAlignment="Center"/>
+          </StackPanel>
+          </StackPanel>
+          <CheckBox x:Name="ChorusBox" Content="Chorus"
+                    ToolTip.Tip="Duplicates the sound with a slow pitch wobble so it feels thicker."/>
+          <StackPanel x:Name="ChorusChildren" Margin="20,0,0,0" Spacing="10">
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Text="Intensity" VerticalAlignment="Center" Width="120"
+                       ToolTip.Tip="How much chorused sound is mixed in."/>
+            <Slider x:Name="ChorusMixSlider" Minimum="0" Maximum="100" Width="220" VerticalAlignment="Center"
+                    ToolTip.Tip="How much chorused sound is mixed in."/>
+            <TextBlock x:Name="ChorusMixLabel" VerticalAlignment="Center"/>
+          </StackPanel>
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Text="Rate" VerticalAlignment="Center" Width="120"
+                       ToolTip.Tip="How fast the chorus wobble moves, in hertz."/>
+            <Slider x:Name="ChorusRateSlider" Minimum="10" Maximum="300" Width="220" VerticalAlignment="Center"
+                    ToolTip.Tip="How fast the chorus wobble moves, in hertz."/>
+            <TextBlock x:Name="ChorusRateLabel" VerticalAlignment="Center"/>
+          </StackPanel>
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Text="Depth" VerticalAlignment="Center" Width="120"
+                       ToolTip.Tip="How far the pitch wobble travels. Higher is more seasick."/>
+            <Slider x:Name="ChorusDepthSlider" Minimum="0" Maximum="100" Width="220" VerticalAlignment="Center"
+                    ToolTip.Tip="How far the pitch wobble travels. Higher is more seasick."/>
+            <TextBlock x:Name="ChorusDepthLabel" VerticalAlignment="Center"/>
+          </StackPanel>
+          </StackPanel>
+          <CheckBox x:Name="FlangerBox" Content="Flanger"
+                    ToolTip.Tip="A shorter, more metallic sweep than chorus. Good in small amounts."/>
+          <StackPanel x:Name="FlangerChildren" Margin="20,0,0,0" Spacing="10">
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Text="Intensity" VerticalAlignment="Center" Width="120"
+                       ToolTip.Tip="How much flanged sound is mixed in."/>
+            <Slider x:Name="FlangerMixSlider" Minimum="0" Maximum="100" Width="220" VerticalAlignment="Center"
+                    ToolTip.Tip="How much flanged sound is mixed in."/>
+            <TextBlock x:Name="FlangerMixLabel" VerticalAlignment="Center"/>
+          </StackPanel>
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Text="Rate" VerticalAlignment="Center" Width="120"
+                       ToolTip.Tip="How fast the flange sweep moves."/>
+            <Slider x:Name="FlangerRateSlider" Minimum="5" Maximum="200" Width="220" VerticalAlignment="Center"
+                    ToolTip.Tip="How fast the flange sweep moves."/>
+            <TextBlock x:Name="FlangerRateLabel" VerticalAlignment="Center"/>
+          </StackPanel>
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Text="Depth" VerticalAlignment="Center" Width="120"
+                       ToolTip.Tip="How wide the flange sweep is."/>
+            <Slider x:Name="FlangerDepthSlider" Minimum="0" Maximum="100" Width="220" VerticalAlignment="Center"
+                    ToolTip.Tip="How wide the flange sweep is."/>
+            <TextBlock x:Name="FlangerDepthLabel" VerticalAlignment="Center"/>
+          </StackPanel>
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Text="Feedback" VerticalAlignment="Center" Width="120"
+                       ToolTip.Tip="How much of the flanged signal is fed back. Higher is more jet-like."/>
+            <Slider x:Name="FlangerFeedbackSlider" Minimum="0" Maximum="70" Width="220" VerticalAlignment="Center"
+                    ToolTip.Tip="How much of the flanged signal is fed back. Higher is more jet-like."/>
+            <TextBlock x:Name="FlangerFeedbackLabel" VerticalAlignment="Center"/>
+          </StackPanel>
+          </StackPanel>
+          <CheckBox x:Name="PhaserBox" Content="Phaser"
+                    ToolTip.Tip="Sweeps notches through the tone. Softer than flanger, more whoosh."/>
+          <StackPanel x:Name="PhaserChildren" Margin="20,0,0,0" Spacing="10">
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Text="Intensity" VerticalAlignment="Center" Width="120"
+                       ToolTip.Tip="How much phased sound is mixed in."/>
+            <Slider x:Name="PhaserMixSlider" Minimum="0" Maximum="100" Width="220" VerticalAlignment="Center"
+                    ToolTip.Tip="How much phased sound is mixed in."/>
+            <TextBlock x:Name="PhaserMixLabel" VerticalAlignment="Center"/>
+          </StackPanel>
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Text="Rate" VerticalAlignment="Center" Width="120"
+                       ToolTip.Tip="How fast the phaser sweep moves."/>
+            <Slider x:Name="PhaserRateSlider" Minimum="5" Maximum="200" Width="220" VerticalAlignment="Center"
+                    ToolTip.Tip="How fast the phaser sweep moves."/>
+            <TextBlock x:Name="PhaserRateLabel" VerticalAlignment="Center"/>
+          </StackPanel>
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Text="Depth" VerticalAlignment="Center" Width="120"
+                       ToolTip.Tip="How far the phaser notches travel."/>
+            <Slider x:Name="PhaserDepthSlider" Minimum="0" Maximum="100" Width="220" VerticalAlignment="Center"
+                    ToolTip.Tip="How far the phaser notches travel."/>
+            <TextBlock x:Name="PhaserDepthLabel" VerticalAlignment="Center"/>
+          </StackPanel>
+          </StackPanel>
+          <CheckBox x:Name="DelayBox" Content="Delay"
+                    ToolTip.Tip="Echo repeats. Keep mix and feedback low so typing stays readable."/>
+          <StackPanel x:Name="DelayChildren" Margin="20,0,0,0" Spacing="10">
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Text="Time" VerticalAlignment="Center" Width="120"
+                       ToolTip.Tip="Gap between the key and the first echo, in milliseconds."/>
+            <Slider x:Name="DelayTimeSlider" Minimum="50" Maximum="600" Width="220" VerticalAlignment="Center"
+                    ToolTip.Tip="Gap between the key and the first echo, in milliseconds."/>
+            <TextBlock x:Name="DelayTimeLabel" VerticalAlignment="Center"/>
+          </StackPanel>
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Text="Feedback" VerticalAlignment="Center" Width="120"
+                       ToolTip.Tip="How many echoes trail off. Higher rings longer."/>
+            <Slider x:Name="DelayFeedbackSlider" Minimum="0" Maximum="70" Width="220" VerticalAlignment="Center"
+                    ToolTip.Tip="How many echoes trail off. Higher rings longer."/>
+            <TextBlock x:Name="DelayFeedbackLabel" VerticalAlignment="Center"/>
+          </StackPanel>
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Text="Delay mix" VerticalAlignment="Center" Width="120"
+                       ToolTip.Tip="How loud the echoes are against the dry key."/>
+            <Slider x:Name="DelayMixSlider" Minimum="0" Maximum="100" Width="220" VerticalAlignment="Center"
+                    ToolTip.Tip="How loud the echoes are against the dry key."/>
+            <TextBlock x:Name="DelayMixLabel" VerticalAlignment="Center"/>
+          </StackPanel>
+          </StackPanel>
+          <CheckBox x:Name="ConvBox" Content="Convolver (built-in IR)"
+                    ToolTip.Tip="A short baked-in room snapshot. Not a user IR loader."/>
+          <StackPanel x:Name="ConvChildren" Margin="20,0,0,0" Spacing="10">
+          <ComboBox x:Name="ConvIrBox" Width="220" HorizontalAlignment="Left"
+                    ToolTip.Tip="Short is a tight booth. Medium is a slightly larger room.">
+            <ComboBoxItem Content="Short room" Tag="Short"/>
+            <ComboBoxItem Content="Medium room" Tag="Medium"/>
+          </ComboBox>
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Text="Intensity" VerticalAlignment="Center" Width="120"
+                       ToolTip.Tip="How much of the convolved room is mixed in."/>
+            <Slider x:Name="ConvMixSlider" Minimum="0" Maximum="100" Width="220" VerticalAlignment="Center"
+                    ToolTip.Tip="How much of the convolved room is mixed in."/>
+            <TextBlock x:Name="ConvMixLabel" VerticalAlignment="Center"/>
+          </StackPanel>
+          </StackPanel>
+          <CheckBox x:Name="ReverbBox" Content="Reverb"
+                    ToolTip.Tip="A synthetic room tail after the key. The limiter still catches peaks."/>
+          <StackPanel x:Name="ReverbChildren" Margin="20,0,0,0" Spacing="10">
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Text="Decay" VerticalAlignment="Center" Width="120"
+                       ToolTip.Tip="How long the reverb tail rings after you let go of the key."/>
+            <Slider x:Name="DecaySlider" Minimum="0" Maximum="100" Width="220" VerticalAlignment="Center"
+                    ToolTip.Tip="How long the reverb tail rings after you let go of the key."/>
+            <TextBlock x:Name="DecayLabel" VerticalAlignment="Center"/>
+          </StackPanel>
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Text="Damping" VerticalAlignment="Center" Width="120"
+                       ToolTip.Tip="How quickly highs die in the tail. Higher sounds darker and smaller."/>
+            <Slider x:Name="DampingSlider" Minimum="0" Maximum="100" Width="220" VerticalAlignment="Center"
+                    ToolTip.Tip="How quickly highs die in the tail. Higher sounds darker and smaller."/>
+            <TextBlock x:Name="DampingLabel" VerticalAlignment="Center"/>
+          </StackPanel>
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Text="Reverb mix" VerticalAlignment="Center" Width="120"
+                       ToolTip.Tip="How loud the room is against the dry key."/>
+            <Slider x:Name="ReverbMixSlider" Minimum="0" Maximum="100" Width="220" VerticalAlignment="Center"
+                    ToolTip.Tip="How loud the room is against the dry key."/>
+            <TextBlock x:Name="ReverbMixLabel" VerticalAlignment="Center"/>
+          </StackPanel>
+          </StackPanel>
+          <CheckBox x:Name="WidthBox" Content="Stereo width"
+                    ToolTip.Tip="Pushes left and right apart. 0 is mono-ish; high is extra wide."/>
+          <StackPanel x:Name="WidthChildren" Margin="20,0,0,0" Spacing="10">
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Text="Intensity" VerticalAlignment="Center" Width="120"
+                       ToolTip.Tip="How wide the stereo image is."/>
+            <Slider x:Name="WidthSlider" Minimum="0" Maximum="100" Width="220" VerticalAlignment="Center"
+                    ToolTip.Tip="How wide the stereo image is."/>
+            <TextBlock x:Name="WidthLabel" VerticalAlignment="Center"/>
+          </StackPanel>
+          </StackPanel>
+          <CheckBox x:Name="CrossfeedBox" Content="Crossfeed"
+                    ToolTip.Tip="Bleeds a little of each ear into the other. Often nicer on headphones."/>
+          <StackPanel x:Name="CrossfeedChildren" Margin="20,0,0,0" Spacing="10">
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Text="Intensity" VerticalAlignment="Center" Width="120"
+                       ToolTip.Tip="How much of the opposite ear is mixed in."/>
+            <Slider x:Name="CrossfeedSlider" Minimum="0" Maximum="100" Width="220" VerticalAlignment="Center"
+                    ToolTip.Tip="How much of the opposite ear is mixed in."/>
+            <TextBlock x:Name="CrossfeedLabel" VerticalAlignment="Center"/>
+          </StackPanel>
+          </StackPanel>
+        </StackPanel>
+
+        <StackPanel x:Name="BehaviorPage" Spacing="12" IsVisible="False">
+          <TextBlock Text="Behavior" FontSize="26" FontWeight="SemiBold"/>
+          <TextBlock x:Name="BehaviorHint" Opacity="0.75" TextWrapping="Wrap"/>
+          <TextBlock Text="Key repeat" ToolTip.Tip="What happens if you hold a key. Off plays once. On follows Windows repeat. Rate limit caps how often it can fire."/>
+          <ComboBox x:Name="RepeatBox" Width="220" HorizontalAlignment="Left"
+                    ToolTip.Tip="What happens if you hold a key. Off plays once. On follows Windows repeat. Rate limit caps how often it can fire.">
+            <ComboBoxItem Content="Off" Tag="Off"/>
+            <ComboBoxItem Content="On" Tag="On"/>
+            <ComboBoxItem Content="Rate limit" Tag="RateLimit"/>
+          </ComboBox>
+          <TextBlock Text="Play on" ToolTip.Tip="Which edge of the keystroke makes sound: press, release, or both."/>
+          <ComboBox x:Name="PlayOnBox" Width="220" HorizontalAlignment="Left"
+                    ToolTip.Tip="Which edge of the keystroke makes sound: press, release, or both.">
+            <ComboBoxItem Content="Key down" Tag="Down"/>
+            <ComboBoxItem Content="Key up" Tag="Up"/>
+            <ComboBoxItem Content="Both" Tag="Both"/>
+          </ComboBox>
+          <TextBlock Text="Modifiers (Ctrl / Alt / Win)" ToolTip.Tip="Ignore keeps shortcuts like Ctrl+C silent. Play anyway sounds even during shortcuts."/>
+          <ComboBox x:Name="ModifierBox" Width="220" HorizontalAlignment="Left"
+                    ToolTip.Tip="Ignore keeps shortcuts like Ctrl+C silent. Play anyway sounds even during shortcuts.">
+            <ComboBoxItem Content="Ignore shortcuts" Tag="Ignore"/>
+            <ComboBoxItem Content="Play anyway" Tag="Play"/>
+          </ComboBox>
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Text="Polyphony" VerticalAlignment="Center" ToolTip.Tip="How many overlapping sounds are allowed. Lower is lighter on the CPU."/>
+            <Slider x:Name="PolyphonySlider" Minimum="1" Maximum="64" Width="200" VerticalAlignment="Center"
+                    ToolTip.Tip="How many overlapping sounds are allowed. Lower is lighter on the CPU."/>
+            <TextBlock x:Name="PolyphonyLabel" VerticalAlignment="Center"/>
+          </StackPanel>
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Text="Velocity variation" VerticalAlignment="Center"
+                       ToolTip.Tip="Random loudness per key so chords and fast typing don’t sound like one cloned hit."/>
+            <Slider x:Name="BehaviorVelocitySlider" Minimum="0" Maximum="50" Width="200" VerticalAlignment="Center"
+                    ToolTip.Tip="Random loudness per key so chords and fast typing don’t sound like one cloned hit."/>
+            <TextBlock x:Name="BehaviorVelocityLabel" VerticalAlignment="Center"/>
+          </StackPanel>
+          <CheckBox x:Name="HoldSustainBox"
+                    Content="Hold sustain (piano)"
+                    ToolTip.Tip="While a piano key is held, the tone keeps ringing. Release fades it out. Clicks ignore this."/>
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Text="Release" VerticalAlignment="Center"
+                       ToolTip.Tip="How long the piano note fades after you let go when hold sustain is on."/>
+            <Slider x:Name="ReleaseSlider" Minimum="40" Maximum="1200" Width="200" VerticalAlignment="Center"
+                    ToolTip.Tip="How long the piano note fades after you let go when hold sustain is on."/>
+            <TextBlock x:Name="ReleaseLabel" VerticalAlignment="Center"/>
+          </StackPanel>
+          <CheckBox x:Name="SilenceUnmappedBox" Content="Silence keys this pack does not map"
+                    ToolTip.Tip="If the pack has no sample for a key, stay quiet even when a fallback would have played."/>
+          <TextBlock Text="Silence groups — tick any combination. Those keys stay quiet even if the pack has a fallback."
+                     Opacity="0.75"
+                     TextWrapping="Wrap"
+                     ToolTip.Tip="Combine groups. Function, modifiers, numpad, and navigation can all be muted together."/>
+          <CheckBox x:Name="SilentFunctionBox" Content="Function keys (F1–F12)" ToolTip.Tip="Mute F1–F12."/>
+          <CheckBox x:Name="SilentModifiersBox" Content="Modifiers (Shift, Ctrl, Alt, Win, Caps Lock)" ToolTip.Tip="Mute Shift, Ctrl, Alt, Win, and Caps Lock."/>
+          <CheckBox x:Name="SilentNumpadBox" Content="Numpad" ToolTip.Tip="Mute the numeric keypad."/>
+          <CheckBox x:Name="SilentNavigationBox" Content="Navigation (arrows, Home, End, Page, Insert, Delete)" ToolTip.Tip="Mute arrows, Home, End, Page Up/Down, Insert, and Delete."/>
+          <TextBlock Text="Extra silent keys (comma-separated names, e.g. Tab, Space)"
+                     ToolTip.Tip="Named keys from the catalog, comma-separated. Example: Tab, Space."/>
+          <TextBox x:Name="SilentKeysBox"
+                   Width="360"
+                   HorizontalAlignment="Left"
+                   Watermark="Tab, Space"
+                   ToolTip.Tip="Named keys from the catalog, comma-separated. Example: Tab, Space."
+                   LostFocus="OnSilentKeysLostFocus"
+                   KeyDown="OnSilentKeysKeyDown"/>
+        </StackPanel>
+
+        <StackPanel x:Name="PacksPage" Spacing="12" IsVisible="False">
+          <TextBlock Text="Packs" FontSize="26" FontWeight="SemiBold"/>
+          <TextBlock Text="This is your library. Enable or disable a pack to show or hide it when picking a pack on a profile. Uninstall is only for packs you installed."
+                     Opacity="0.8"
+                     TextWrapping="Wrap"/>
+          <TextBlock Text="Custom samples" FontWeight="SemiBold" Margin="0,4,0,0"/>
+          <TextBlock Text="Drop files in the custom folder, then pick Custom sample on Profiles and choose the sound in the Custom sound list. Primary = every key. Overlay = Enter, Escape, Space."
+                     Opacity="0.8"
+                     TextWrapping="Wrap"/>
+          <Button Content="Open custom folder" HorizontalAlignment="Left" Click="OnOpenCustomSamples"/>
+          <StackPanel x:Name="CustomSampleRows" Spacing="8"/>
+          <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,8,0,0">
+            <Button Content="Install pack…" Click="OnInstallPack"/>
+            <Button Content="Open examples folder" Click="OnOpenExamples"/>
+          </StackPanel>
+          <TextBlock x:Name="ExamplesHint"
+                     Opacity="0.7"
+                     TextWrapping="Wrap"/>
+          <StackPanel x:Name="PackRows" Spacing="8"/>
+        </StackPanel>
+
+        <StackPanel x:Name="SettingsPage" Spacing="12" IsVisible="False">
+          <TextBlock Text="Settings" FontSize="26" FontWeight="SemiBold"/>
+          <TextBlock Text="Audio output" ToolTip.Tip="Only plugged-in playback devices. The list updates when you plug in or unplug. Windows default follows the Sound control panel."/>
+          <ComboBox x:Name="SettingsOutputBox" Width="360" HorizontalAlignment="Left"
+                    ToolTip.Tip="Only plugged-in playback devices. The list updates when you plug in or unplug. Windows default follows the Sound control panel."/>
+          <CheckBox x:Name="AutostartBox" Content="Start with Windows" ToolTip.Tip="Launch Key FX Board when you sign in."/>
+          <CheckBox x:Name="CloseToTrayBox" Content="Close button hides to the tray" ToolTip.Tip="The window close button hides the app instead of quitting."/>
+          <CheckBox x:Name="StartMinimizedBox" Content="Start in the tray after first run" ToolTip.Tip="After first run, open in the tray instead of showing the window."/>
+          <Button Content="Check for updates"
+                  HorizontalAlignment="Left"
+                  ToolTip.Tip="Downloads a new app version when a release feed is configured. New Instruments and features ship this way."
+                  Click="OnCheckForUpdates"/>
+          <TextBlock x:Name="UpdateStatusText"
+                     Opacity="0.7"
+                     TextWrapping="Wrap"/>
+          <Button Content="Reset app settings"
+                  HorizontalAlignment="Left"
+                  ToolTip.Tip="Restore volume, boost, mute, output device, autostart, and tray options. Profiles and packs stay."
+                  Click="OnResetAppSettings"/>
+          <Button x:Name="OpenDataButton"
+                  Content="Open data folder"
+                  HorizontalAlignment="Left"
+                  Click="OnOpenDataFolder"/>
+          <TextBlock x:Name="DataPath"
+                     Opacity="0.7"
+                     TextWrapping="Wrap"/>
+          <Button Content="Remove local data…"
+                  HorizontalAlignment="Left"
+                  ToolTip.Tip="Deletes profiles, packs, custom samples, and settings in AppData. The installed app stays until you uninstall from Windows Settings."
+                  Click="OnRemoveLocalData"/>
+          <TextBlock Text="Sounds will not play in Administrator windows unless this app is also elevated. We do not ask for admin."
+                     Opacity="0.75"
+                     TextWrapping="Wrap"
+                     Margin="0,8,0,0"/>
+          <Button Content="Quit Key FX Board"
+                  HorizontalAlignment="Left"
+                  Click="OnQuit"/>
+        </StackPanel>
+
+        <StackPanel x:Name="AboutPage" Spacing="12" IsVisible="False">
+          <TextBlock Text="About" FontSize="26" FontWeight="SemiBold"/>
+          <TextBlock Text="Key FX Board"
+                     FontSize="18"/>
+          <TextBlock x:Name="VersionText"/>
+          <TextBlock Text="Code license: MIT. Factory audio is synthesized: click and piano. Custom samples are your files."
+                     TextWrapping="Wrap"
+                     Opacity="0.8"/>
+          <TextBlock Text="Privacy: we do not record keystrokes. The global hook only triggers a sound."
+                     TextWrapping="Wrap"
+                     Opacity="0.8"/>
+          <Button Content="Open getting started"
+                  HorizontalAlignment="Left"
+                  Click="OnOpenGettingStarted"/>
+          <Button Content="Open license"
+                  HorizontalAlignment="Left"
+                  Click="OnOpenLicense"/>
+          <Button Content="Open third-party notices"
+                  HorizontalAlignment="Left"
+                  Click="OnOpenThirdParty"/>
+        </StackPanel>
+      </Panel>
+    </ScrollViewer>
+  </DockPanel>
+</Window>

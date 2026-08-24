@@ -1,0 +1,50 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{D8FF9A58-A952-42A7-B95B-30C039EF7230}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeyFXBoard.Core", "src\KeyFXBoard.Core\KeyFXBoard.Core.csproj", "{7168571C-66FC-432B-AA48-A1084A7EBBA7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeyFXBoard.Windows", "src\KeyFXBoard.Windows\KeyFXBoard.Windows.csproj", "{4AB257EF-794C-4D6D-A56A-510400E64285}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{BC1D3FF2-56B4-43F1-A6A7-89C25173E63A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeyFXBoard.Core.Tests", "tests\KeyFXBoard.Core.Tests\KeyFXBoard.Core.Tests.csproj", "{51044D3B-8F0A-4F2D-8F30-DC06C3F78087}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeyFXBoard.App", "src\KeyFXBoard.App\KeyFXBoard.App.csproj", "{5A14840C-998D-4C14-A581-B7D2172C29DB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7168571C-66FC-432B-AA48-A1084A7EBBA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7168571C-66FC-432B-AA48-A1084A7EBBA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7168571C-66FC-432B-AA48-A1084A7EBBA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7168571C-66FC-432B-AA48-A1084A7EBBA7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4AB257EF-794C-4D6D-A56A-510400E64285}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4AB257EF-794C-4D6D-A56A-510400E64285}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4AB257EF-794C-4D6D-A56A-510400E64285}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4AB257EF-794C-4D6D-A56A-510400E64285}.Release|Any CPU.Build.0 = Release|Any CPU
+		{51044D3B-8F0A-4F2D-8F30-DC06C3F78087}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{51044D3B-8F0A-4F2D-8F30-DC06C3F78087}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{51044D3B-8F0A-4F2D-8F30-DC06C3F78087}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{51044D3B-8F0A-4F2D-8F30-DC06C3F78087}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A14840C-998D-4C14-A581-B7D2172C29DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A14840C-998D-4C14-A581-B7D2172C29DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A14840C-998D-4C14-A581-B7D2172C29DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A14840C-998D-4C14-A581-B7D2172C29DB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{7168571C-66FC-432B-AA48-A1084A7EBBA7} = {D8FF9A58-A952-42A7-B95B-30C039EF7230}
+		{4AB257EF-794C-4D6D-A56A-510400E64285} = {D8FF9A58-A952-42A7-B95B-30C039EF7230}
+		{51044D3B-8F0A-4F2D-8F30-DC06C3F78087} = {BC1D3FF2-56B4-43F1-A6A7-89C25173E63A}
+		{5A14840C-998D-4C14-A581-B7D2172C29DB} = {D8FF9A58-A952-42A7-B95B-30C039EF7230}
+	EndGlobalSection
+EndGlobal

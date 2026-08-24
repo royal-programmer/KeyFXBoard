@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Key FX Board — Getting started</title>
+  <style>
+    :root {
+      --ink: #f3eee4;
+      --muted: #b9b3a8;
+      --bg: #141414;
+      --panel: #1c1c1c;
+      --line: #2e2e2e;
+      --teal: #2a9d8f;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); }
+    body {
+      font-family: "Segoe UI", "Avenir Next", sans-serif;
+      min-height: 100vh;
+      background:
+        radial-gradient(1200px 500px at 10% -10%, #1e3a36 0%, transparent 55%),
+        radial-gradient(900px 400px at 100% 0%, #2a2418 0%, transparent 50%),
+        var(--bg);
+    }
+    main {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 56px 28px 80px;
+    }
+    h1 {
+      font-size: 42px;
+      font-weight: 650;
+      letter-spacing: -0.04em;
+      margin: 0 0 12px;
+    }
+    .lede {
+      font-size: 18px;
+      color: var(--muted);
+      line-height: 1.5;
+      max-width: 36em;
+    }
+    .mark {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      background: var(--teal);
+      margin-right: 10px;
+      vertical-align: 2px;
+    }
+    section {
+      margin-top: 40px;
+      padding-top: 28px;
+      border-top: 1px solid var(--line);
+    }
+    h2 {
+      font-size: 15px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--teal);
+      margin: 0 0 14px;
+    }
+    p, li { line-height: 1.55; color: var(--ink); }
+    ul { padding-left: 1.1em; }
+    li { margin: 8px 0; }
+    .path {
+      font-family: Consolas, "Cascadia Mono", monospace;
+      font-size: 13px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      padding: 2px 7px;
+    }
+    footer {
+      margin-top: 48px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1><span class="mark"></span>Key FX Board</h1>
+    <p class="lede">Type anywhere. A click, a custom sample, or a piano — with a real FX rack. Nothing you type is recorded.</p>
+
+    <section>
+      <h2>After install</h2>
+      <ul>
+        <li>The app lives in the system tray. Double-click the tray icon to open the window; a single click mutes.</li>
+        <li>First launch may take a few seconds while factory piano samples are written to AppData.</li>
+        <li>Mute, volume, and output device are on Home. Profiles and effects are saved setups, not extra apps.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Sounds</h2>
+      <ul>
+        <li><strong>Profiles</strong> pick a pack and a room (Dry, Reverb, Bass, Surround).</li>
+        <li><strong>Custom sample</strong> — drop files in the custom folder, then choose the file on Profiles.</li>
+        <li><strong>Piano</strong> — Instruments → Start. Closing the map does not stop piano; Stop does.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Where files live</h2>
+      <p>Settings and your packs stay in <span class="path">%AppData%\KeyFXBoard</span>. Uninstalling the program does not have to delete that folder. Use Settings → Remove local data if you want a clean wipe.</p>
+      <p>App updates (new Instruments, later versions) replace the program under <span class="path">%LocalAppData%\KeyFXBoard</span>. Your profiles stay.</p>
+    </section>
+
+    <section>
+      <h2>Privacy</h2>
+      <p>A global keyboard hook exists only to play a sound. We do not log keys, window titles, or what you type.</p>
+    </section>
+
+    <footer>MIT licensed. Factory click and piano are synthesized. Custom samples are your files.</footer>
+  </main>
+</body>
+</html>
