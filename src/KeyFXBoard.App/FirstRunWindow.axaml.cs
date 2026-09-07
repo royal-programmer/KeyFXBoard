@@ -31,18 +31,25 @@ public partial class FirstRunWindow : Window
 
     private void OnDone(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => Finish();
 
-    private void OnOpenGuide(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-    {
-        var path = Path.Combine(AppContext.BaseDirectory, "GettingStarted.html");
-        if (File.Exists(path))
-        {
-            Process.Start(new ProcessStartInfo { FileName = path, UseShellExecute = true });
-        }
-    }
+    private void OnOpenGuide(object? sender, Avalonia.Interactivity.RoutedEventArgs e) =>
+        OpenUrl(ProductUrls.GettingStarted);
 
     private void Finish()
     {
         _runtime.CompleteFirstRun(AutostartBox.IsChecked == true);
+        OpenUrl(ProductUrls.ThankYou);
         Close();
+    }
+
+    private static void OpenUrl(string url)
+    {
+        try
+        {
+            Process.Start(new ProcessStartInfo { FileName = url, UseShellExecute = true });
+        }
+        catch
+        {
+            // Best-effort; first-run should not fail if the browser cannot open.
+        }
     }
 }

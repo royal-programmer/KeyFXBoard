@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Uninstall — Key FX Board</title>
+  <meta name="description" content="Sorry to see you go. Optional feedback for Key FX Board."/>
+  <link rel="icon" href="assets/app.ico" sizes="any"/>
+  <link rel="icon" type="image/png" href="assets/app-icon.png"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Syne:wght@600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="assets/site.css"/>
+</head>
+<body>
+  <nav class="top" aria-label="Site">
+    <a href="index.html">Home</a>
+    <a href="https://github.com/royal-programmer/KeyFXBoard">GitHub</a>
+  </nav>
+
+  <main class="page">
+    <div class="wrap">
+      <div class="brand">
+        <img src="assets/app-icon.png" width="48" height="48" alt=""/>
+        <p class="brand-name">Key FX Board</p>
+      </div>
+      <h1>We’ll miss the clicks.</h1>
+      <p class="lede" style="max-width:42ch">Sorry to see you go. Uninstall is handled in Windows Settings → Apps. Feedback is optional and never includes what you typed.</p>
+
+      <p class="section-kicker" style="margin-top:2rem">Optional — why are you leaving?</p>
+      <div class="reasons" id="reasons" role="group" aria-label="Feedback reasons">
+        <button type="button" class="reason" data-reason="bug">Something broke / bug</button>
+        <button type="button" class="reason" data-reason="missing-feature">Missing a feature I need</button>
+        <button type="button" class="reason" data-reason="performance">Latency, CPU, or audio issues</button>
+        <button type="button" class="reason" data-reason="privacy">Privacy / keyboard hook concern</button>
+        <button type="button" class="reason" data-reason="switching">Switching to another app</button>
+        <button type="button" class="reason" data-reason="other">Other</button>
+      </div>
+
+      <div class="cta-row">
+        <a class="btn btn-primary" id="feedback-link" href="https://github.com/royal-programmer/KeyFXBoard/issues/new?title=Uninstall%20feedback&amp;body=Reason%3A%20(optional)%0A%0AWhat%20happened%3A%0A">Leave feedback on GitHub</a>
+        <a class="btn btn-ghost" href="index.html#download">Reinstall / download again</a>
+      </div>
+
+      <p class="note" style="margin-top:2rem">
+        <strong>Local data:</strong> uninstalling the program does not always delete <code>%AppData%\KeyFXBoard</code>.
+        Use Settings → Remove local data before uninstall if you want a clean wipe — or delete that folder manually.
+      </p>
+    </div>
+  </main>
+
+  <footer class="site-foot">
+    <div class="wrap foot-row">
+      <span>No keystrokes are collected on this page.</span>
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="https://github.com/royal-programmer/KeyFXBoard/issues">Issues</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="assets/site.js"></script>
+</body>
+</html>

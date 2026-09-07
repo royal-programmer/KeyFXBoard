@@ -3,7 +3,8 @@
 Key FX Board is installed.
 
 - Open it from the Start menu or the desktop shortcut.
-- Read `GettingStarted.html` next to the app for a short tour.
-- Later versions (new Instruments, etc.) install through **Settings → Check for updates** once a release feed is published.
+- After the welcome screen, a thank-you page opens in your browser with quick tips.
+- Online guide: https://royal-programmer.github.io/KeyFXBoard/getting-started.html
+- Later versions install through **Settings → Check for updates**.
 
 Click Finish to close this wizard. The app can launch when setup completes.

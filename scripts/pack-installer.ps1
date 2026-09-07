@@ -32,7 +32,7 @@ if (Test-Path $Publish) { Remove-Item $Publish -Recurse -Force }
 dotnet publish $Project -c Release -r win-x64 --self-contained true -o $Publish
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-Copy-Item (Join-Path $Root "LICENSE.txt") (Join-Path $Publish "LICENSE.txt") -Force
+Copy-Item (Join-Path $Root "LICENSE") (Join-Path $Publish "LICENSE") -Force
 Copy-Item (Join-Path $Root "THIRD_PARTY_NOTICES.txt") (Join-Path $Publish "THIRD_PARTY_NOTICES.txt") -Force
 Copy-Item (Join-Path $Installer "GettingStarted.html") (Join-Path $Publish "GettingStarted.html") -Force
 New-Item -ItemType Directory -Force -Path (Join-Path $Publish "Assets") | Out-Null
@@ -54,7 +54,7 @@ $packArgs = @(
   "--shortcuts", "Desktop,StartMenuRoot",
   "--outputDir", $Releases,
   "--instWelcome", (Join-Path $Installer "welcome.md"),
-  "--instLicense", (Join-Path $Root "LICENSE.txt"),
+  "--instLicense", (Join-Path $Root "LICENSE"),
   "--instReadme", (Join-Path $Installer "readme.md"),
   "--instConclusion", (Join-Path $Installer "conclusion.md"),
   "--msi",

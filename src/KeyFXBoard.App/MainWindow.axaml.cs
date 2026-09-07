@@ -1579,11 +1579,42 @@ public partial class MainWindow : Window
         _quit?.Invoke();
     }
 
-    private void OnOpenGettingStarted(object? sender, RoutedEventArgs e) =>
-        OpenBesideExe("GettingStarted.html", "Getting started");
+    private void OnOpenGettingStarted(object? sender, RoutedEventArgs e)
+    {
+        try
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = ProductUrls.GettingStarted,
+                UseShellExecute = true
+            });
+        }
+        catch
+        {
+            OpenBesideExe("GettingStarted.html", "Getting started");
+        }
+    }
+
+    private void OnOpenProductSite(object? sender, RoutedEventArgs e) =>
+        OpenHttp(ProductUrls.Site);
+
+    private void OnOpenUninstallPage(object? sender, RoutedEventArgs e) =>
+        OpenHttp(ProductUrls.Uninstall);
+
+    private static void OpenHttp(string url)
+    {
+        try
+        {
+            Process.Start(new ProcessStartInfo { FileName = url, UseShellExecute = true });
+        }
+        catch
+        {
+            // Best-effort browser open.
+        }
+    }
 
     private void OnOpenLicense(object? sender, RoutedEventArgs e) =>
-        OpenBesideExe("LICENSE.txt", "LICENSE");
+        OpenBesideExe("LICENSE", "LICENSE");
 
     private void OnOpenThirdParty(object? sender, RoutedEventArgs e) =>
         OpenBesideExe("THIRD_PARTY_NOTICES.txt", "THIRD_PARTY_NOTICES");

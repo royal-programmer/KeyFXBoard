@@ -51,10 +51,12 @@ Default: **off** until the user opts in on first run (“Start with Windows”).
 ## Updates
 
 - Velopack `UpdateManager`
-- Source later: GitHub Releases HTTPS (`AppUpdateService.UpdateFeedUrl` → repo URL)
-- v1 personal: updates are **manual** (Settings → Check for updates). Empty feed URL = friendly “not configured yet”
+- Source: GitHub Releases HTTPS (`AppUpdateService.UpdateFeedUrl` → `https://github.com/royal-programmer/KeyFXBoard`)
+- Product site (GitHub Pages): https://royal-programmer.github.io/KeyFXBoard/ — download, thank-you, uninstall feedback, getting started
+- v1 personal: updates are **manual** (Settings → Check for updates)
 - When enabled: user-driven check only (never on the audio thread)
 - Apply on restart via `ApplyUpdatesAndRestart`
+- First-run **Done** opens the thank-you page in the browser; About can open the product site and uninstall feedback page
 
 **What updates:** the installed app (exe + built-in piano, FX, UI). New Instruments later = bump `Directory.Build.props` Version, pack, publish releases. Friend’s installed copy checks and updates.
 

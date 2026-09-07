@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Key FX Board — Typing sounds you can design</title>
+  <meta name="description" content="Windows tray app for customizable keyboard typing sounds — sample packs, per-key mapping, profiles, and a built-in FX rack."/>
+  <meta property="og:title" content="Key FX Board"/>
+  <meta property="og:description" content="Windows tray app for typing sounds you can design — packs, profiles, and a real FX rack."/>
+  <meta property="og:image" content="assets/app-icon.png"/>
+  <link rel="icon" href="assets/app.ico" sizes="any"/>
+  <link rel="icon" type="image/png" href="assets/app-icon.png"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Syne:wght@600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="assets/site.css"/>
+</head>
+<body>
+  <nav class="top" aria-label="Site">
+    <a href="#download">Download</a>
+    <a href="getting-started.html">Getting started</a>
+    <a href="https://github.com/royal-programmer/KeyFXBoard">GitHub</a>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-visual" aria-hidden="true">
+      <div class="keyboard-stage">
+        <div class="keyboard">
+          <div class="key-row">
+            <span class="key"></span><span class="key"></span><span class="key hit"></span><span class="key"></span>
+            <span class="key"></span><span class="key"></span><span class="key"></span><span class="key"></span>
+            <span class="key"></span><span class="key hit"></span>
+          </div>
+          <div class="key-row offset-1">
+            <span class="key"></span><span class="key hit"></span><span class="key"></span><span class="key"></span>
+            <span class="key"></span><span class="key"></span><span class="key"></span><span class="key"></span>
+            <span class="key"></span>
+          </div>
+          <div class="key-row offset-2">
+            <span class="key"></span><span class="key"></span><span class="key"></span><span class="key hit"></span>
+            <span class="key"></span><span class="key"></span><span class="key"></span><span class="key wide"></span>
+          </div>
+          <div class="key-row">
+            <span class="key wide"></span><span class="key wide"></span><span class="key"></span>
+            <span class="key wide"></span><span class="key wide"></span>
+          </div>
+        </div>
+      </div>
+      <div class="wave" aria-hidden="true">
+        <span></span><span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span><span></span>
+      </div>
+    </div>
+
+    <div class="hero-copy">
+      <div class="brand">
+        <img src="assets/app-icon.png" width="48" height="48" alt=""/>
+        <p class="brand-name">Key FX Board</p>
+      </div>
+      <h1 class="headline">Typing sounds you can design.</h1>
+      <p class="lede">Windows tray app for packs, profiles, and a real FX rack — not just one click sample.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="#download">Download for Windows</a>
+        <a class="btn btn-ghost" href="https://github.com/royal-programmer/KeyFXBoard">View source</a>
+      </div>
+      <p class="privacy-line">Listens for keys only to play sound. Never stores what you type.</p>
+    </div>
+  </header>
+
+  <main>
+    <section class="section" id="packs">
+      <div class="wrap">
+        <p class="section-kicker">Packs</p>
+        <h2>Sound sets you install like software</h2>
+        <p class="support">Load factory themes or your own samples. Switch the character of every key without rebuilding the app.</p>
+        <div class="media-frame" data-media="assets/media/S4-packs.png" data-label="Packs">
+          <div class="media-placeholder">
+            <div>
+              <strong>Screenshot placeholder — Packs</strong>
+              Drop <code>S4-packs.png</code> into <code>website/assets/media/</code>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="profiles">
+      <div class="wrap">
+        <p class="section-kicker">Profiles &amp; FX</p>
+        <h2>Change the room, not just the WAV</h2>
+        <p class="support">Profiles own the FX chain — Dry, Reverb, Bass, Surround — so the same pack can feel like a different desk.</p>
+        <div class="media-frame" data-media="assets/media/S3-effects.png" data-label="Effects">
+          <div class="media-placeholder">
+            <div>
+              <strong>Screenshot placeholder — Effects</strong>
+              Drop <code>S3-effects.png</code> into <code>website/assets/media/</code>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="install">
+      <div class="wrap">
+        <p class="section-kicker">Productized</p>
+        <h2>Install, update, uninstall cleanly</h2>
+        <p class="support">MSI wizard or one-click Setup. Later versions arrive through Check for updates. Your profiles stay in AppData.</p>
+        <div class="media-frame" data-media="assets/media/S1-home.png" data-label="Home">
+          <div class="media-placeholder">
+            <div>
+              <strong>Screenshot placeholder — Home</strong>
+              Drop <code>S1-home.png</code> into <code>website/assets/media/</code>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="download">
+      <div class="wrap">
+        <p class="section-kicker">Download</p>
+        <h2>Get Key FX Board 0.1.1</h2>
+        <p class="support">Windows 10/11, x64. Pick the installer that fits how you like to set up software.</p>
+
+        <div class="download-grid">
+          <div class="download-option">
+            <h3>MSI wizard</h3>
+            <p>Classic install path, license, and finish screen. Best if you want control.</p>
+            <a class="btn btn-primary" href="https://github.com/royal-programmer/KeyFXBoard/releases/download/v0.1.1/KeyFXBoard-win.msi">Download MSI</a>
+          </div>
+          <div class="download-option">
+            <h3>Setup (one-click)</h3>
+            <p>Splash, install, launch. Shortcuts on Desktop and Start menu.</p>
+            <a class="btn btn-secondary" href="https://github.com/royal-programmer/KeyFXBoard/releases/download/v0.1.1/KeyFXBoard-win-Setup.exe">Download Setup.exe</a>
+          </div>
+        </div>
+
+        <p class="note">
+          <strong>First-run SmartScreen:</strong> the build is not code-signed yet. Windows may warn on first open — choose More info → Run anyway if you trust this release from GitHub.
+        </p>
+
+        <div class="meta-row">
+          <span>Current: <code>v0.1.1</code></span>
+          <a href="https://github.com/royal-programmer/KeyFXBoard/releases">All releases</a>
+          <a href="getting-started.html">Getting started</a>
+          <span>Open source · MIT</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="trust">
+      <div class="wrap">
+        <p class="section-kicker">Trust</p>
+        <h2>Built to stay in the tray</h2>
+        <ul class="trust-list">
+          <li>
+            <strong>Privacy</strong>
+            <span>Global keyboard hook exists only to play sound. No key history, no cloud logging of what you type.</span>
+          </li>
+          <li>
+            <strong>Open source</strong>
+            <span>Read the code, file issues, inspect the pack format. MIT licensed.</span>
+          </li>
+          <li>
+            <strong>Windows only (v1)</strong>
+            <span>Designed as a session tray app — not a Windows Service.</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-foot">
+    <div class="wrap foot-row">
+      <span>© Key FX Board contributors · MIT</span>
+      <nav>
+        <a href="thank-you.html">Thank you</a>
+        <a href="uninstall.html">Uninstall</a>
+        <a href="https://github.com/royal-programmer/KeyFXBoard/blob/main/docs/README.md">Docs</a>
+        <a href="https://github.com/royal-programmer/KeyFXBoard">GitHub</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="assets/site.js"></script>
+</body>
+</html>

@@ -560,6 +560,12 @@
           <Button Content="Open getting started"
                   HorizontalAlignment="Left"
                   Click="OnOpenGettingStarted"/>
+          <Button Content="Open product page"
+                  HorizontalAlignment="Left"
+                  Click="OnOpenProductSite"/>
+          <Button Content="Uninstall feedback page"
+                  HorizontalAlignment="Left"
+                  Click="OnOpenUninstallPage"/>
           <Button Content="Open license"
                   HorizontalAlignment="Left"
                   Click="OnOpenLicense"/>

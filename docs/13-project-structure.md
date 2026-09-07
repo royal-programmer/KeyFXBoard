@@ -55,7 +55,7 @@ SingleInstance/ Mutex + IPC
 
 References: Core, NAudio, CsWin32.
 
-### `KeyFXBoard.App` (`net10.0`)
+### `KeyFXBoard.App` (`net10.0-windows`)
 
 Avalonia desktop application.
 
