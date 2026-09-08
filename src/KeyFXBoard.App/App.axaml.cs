@@ -215,6 +215,7 @@ public partial class App : Application
             }
         }
 
+        var instruments = new NativeMenu();
         var pianoItem = new NativeMenuItem(_runtime?.PianoMode == true ? "Stop piano" : "Start piano");
         pianoItem.Click += (_, _) =>
         {
@@ -235,6 +236,17 @@ public partial class App : Application
                 window.ShowPianoMap();
             }
         };
+        var pianoMapItem = new NativeMenuItem("Open piano map");
+        pianoMapItem.Click += (_, _) =>
+        {
+            if (desktop.MainWindow is MainWindow window)
+            {
+                ShowMain(desktop);
+                window.ShowPianoMap();
+            }
+        };
+        instruments.Items.Add(pianoItem);
+        instruments.Items.Add(pianoMapItem);
 
         var openItem = new NativeMenuItem("Open Key FX Board");
         openItem.Click += (_, _) => ShowMain(desktop);
@@ -244,7 +256,7 @@ public partial class App : Application
         return
         [
             _muteItem,
-            pianoItem,
+            new NativeMenuItem("Instruments") { Menu = instruments },
             new NativeMenuItem("Profiles") { Menu = profiles },
             new NativeMenuItemSeparator(),
             openItem,

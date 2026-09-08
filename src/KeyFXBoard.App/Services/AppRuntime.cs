@@ -225,7 +225,7 @@ public sealed class AppRuntime : IDisposable
         var path = CustomSampleLibrary.ResolveArmed(Paths, fileName);
         if (path is null)
         {
-            throw new PackException("That file is not in the custom samples folder.");
+            throw new PackException("That file is not in the My sounds folder.");
         }
 
         Engine.Play(WavDecoder.DecodeAny(path, $"{CustomSampleLibrary.PackId}:{Path.GetFileName(path)}"));

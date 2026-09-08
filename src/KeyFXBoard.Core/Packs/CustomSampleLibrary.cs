@@ -6,7 +6,7 @@ namespace KeyFXBoard.Core.Packs;
 public static class CustomSampleLibrary
 {
     public const string PackId = "custom-sample";
-    public const string PackName = "Custom sample";
+    public const string PackName = "My sound";
 
     public static readonly string[] Extensions =
     [
@@ -25,7 +25,7 @@ public static class CustomSampleLibrary
         {
             File.WriteAllText(readme,
                 "Drop audio files here (WAV, MP3, and other formats Windows can decode).\r\n" +
-                "Pick Custom sample on Profiles, then choose the file in Custom sound.\r\n" +
+                "On Profiles, choose My sound as primary or overlay, then pick a Sound file.\r\n" +
                 "Primary = every key. Overlay = Enter, Escape, and Space.\r\n");
         }
     }
@@ -83,8 +83,8 @@ public static class CustomSampleLibrary
             License = "Your files",
             Directory = "",
             Description = string.IsNullOrWhiteSpace(armedFileName)
-                ? "One sound from your custom folder. Primary = every key. Overlay = Enter, Escape, and Space."
-                : $"Armed: {Path.GetFileName(armedFileName)}. Primary = every key. Overlay = Enter, Escape, and Space."
+                ? "One of your sound files. Primary = every key. Overlay = Enter, Escape, and Space."
+                : $"Using {Path.GetFileName(armedFileName)}. Primary = every key. Overlay = Enter, Escape, and Space."
         };
 
     public static SampleBuffer Silent() =>

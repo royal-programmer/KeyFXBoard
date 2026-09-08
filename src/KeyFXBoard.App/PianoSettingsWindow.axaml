@@ -1,0 +1,40 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="KeyFXBoard.App.PianoSettingsWindow"
+        Title="Piano settings"
+        Icon="/Assets/app.ico"
+        Width="440"
+        SizeToContent="Height"
+        CanResize="False"
+        WindowStartupLocation="CenterOwner"
+        TransparencyLevelHint="Mica,AcrylicBlur,None"
+        Background="#CC1C1C1C">
+  <DockPanel Margin="24">
+    <Button DockPanel.Dock="Bottom"
+            Content="Done"
+            HorizontalAlignment="Right"
+            MinWidth="88"
+            Margin="0,20,0,0"
+            Click="OnDone"/>
+    <StackPanel Spacing="12">
+      <TextBlock Text="Piano settings"
+                 FontSize="20"
+                 FontWeight="SemiBold"/>
+      <TextBlock Text="These apply while piano is on. Typing packs ignore them. Key layout tips live on the piano map."
+                 Opacity="0.75"
+                 TextWrapping="Wrap"/>
+      <CheckBox x:Name="HoldSustainBox"
+                Content="Hold to sustain"
+                ToolTip.Tip="While a piano key is held, the tone keeps ringing. Release fades it out."/>
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <TextBlock Text="Release" VerticalAlignment="Center"
+                   ToolTip.Tip="How long the piano note fades after you let go when hold to sustain is on."/>
+        <TextBlock Text="ⓘ" Opacity="0.55" VerticalAlignment="Center"
+                   ToolTip.Tip="How long the piano note fades after you let go when hold to sustain is on."/>
+        <Slider x:Name="ReleaseSlider" Minimum="40" Maximum="1200" Width="180" VerticalAlignment="Center"
+                ToolTip.Tip="How long the piano note fades after you let go when hold to sustain is on."/>
+        <TextBlock x:Name="ReleaseLabel" VerticalAlignment="Center"/>
+      </StackPanel>
+    </StackPanel>
+  </DockPanel>
+</Window>

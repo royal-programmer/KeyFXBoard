@@ -85,31 +85,65 @@
                      FontWeight="SemiBold"
                      Margin="0,8,0,0"/>
           <StackPanel x:Name="PianoOnBanner" Spacing="8" Margin="0,12,0,0" IsVisible="False">
-            <TextBlock Text="Piano is on" FontWeight="SemiBold"/>
-            <TextBlock Text="The map can close; piano keeps playing until you Stop."
+            <TextBlock Text="Instrument on — Piano" FontWeight="SemiBold"/>
+            <TextBlock Text="Profile packs are paused. The map can close; the instrument keeps playing until you Stop."
                        Opacity="0.75"
                        TextWrapping="Wrap"/>
             <Button Content="Stop piano" HorizontalAlignment="Left" Click="OnStopPiano"/>
           </StackPanel>
         </StackPanel>
 
-        <StackPanel x:Name="InstrumentsPage" Spacing="12" IsVisible="False">
+        <StackPanel x:Name="InstrumentsPage" Spacing="14" IsVisible="False">
           <TextBlock Text="Instruments" FontSize="26" FontWeight="SemiBold"/>
-          <TextBlock Text="Piano"
-                     FontSize="18"
-                     FontWeight="SemiBold"/>
           <TextBlock x:Name="InstrumentsStatus"
                      Opacity="0.8"
                      TextWrapping="Wrap"
-                     Text="Start piano to play the computer keyboard as an instrument. Your profile packs stay until you Stop. Closing the map does not stop piano."/>
-          <StackPanel Orientation="Horizontal" Spacing="12">
-            <Button x:Name="InstrumentsToggleButton" Content="Start piano" Click="OnTogglePiano"/>
-            <Button Click="OnOpenPianoMap" Content="Open piano map"
-                    ToolTip.Tip="Show which computer key plays each piano note"/>
-          </StackPanel>
-          <TextBlock Text="Z-row C3, A-row C4, Q-row C5. Page Down / Page Up shift an octave. Home / End return to A-row = C4. Range C2–C6."
-                     Opacity="0.7"
-                     TextWrapping="Wrap"/>
+                     Text="Start an instrument to play the computer keyboard as that instrument. Your profile packs stay until you Stop. Closing a map does not stop the instrument."/>
+
+          <Border BorderBrush="#33FFFFFF" BorderThickness="1" CornerRadius="8" Padding="14,12">
+            <StackPanel Spacing="10">
+              <DockPanel>
+                <TextBlock x:Name="PianoStatusLabel"
+                           DockPanel.Dock="Right"
+                           Opacity="0.7"
+                           VerticalAlignment="Center"
+                           Text="Off"/>
+                <TextBlock Text="Piano"
+                           FontSize="18"
+                           FontWeight="SemiBold"
+                           VerticalAlignment="Center"/>
+              </DockPanel>
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <Button x:Name="InstrumentsToggleButton" Content="Start piano" Click="OnTogglePiano"
+                        ToolTip.Tip="Only one instrument can run at a time."/>
+                <Button Content="Open piano map" Click="OnOpenPianoMap"
+                        ToolTip.Tip="Key layout and octave tips"/>
+                <Button Content="Piano settings" Click="OnOpenPianoSettings"
+                        ToolTip.Tip="Hold to sustain and release"/>
+              </StackPanel>
+            </StackPanel>
+          </Border>
+
+          <Border BorderBrush="#22FFFFFF" BorderThickness="1" CornerRadius="8" Padding="14,12" Opacity="0.72">
+            <StackPanel Spacing="10">
+              <DockPanel>
+                <TextBlock DockPanel.Dock="Right"
+                           Opacity="0.7"
+                           VerticalAlignment="Center"
+                           Text="Coming soon"/>
+                <TextBlock Text="Drums"
+                           FontSize="18"
+                           FontWeight="SemiBold"
+                           VerticalAlignment="Center"/>
+              </DockPanel>
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <Button Content="Start drums" IsEnabled="False"
+                        ToolTip.Tip="Drums will use the same Start / Map / Settings pattern."/>
+                <Button Content="Open drums map" IsEnabled="False"/>
+                <Button Content="Drums settings" IsEnabled="False"/>
+              </StackPanel>
+            </StackPanel>
+          </Border>
         </StackPanel>
 
         <StackPanel x:Name="ProfilesPage" Spacing="12" IsVisible="False">
@@ -128,11 +162,23 @@
           <ComboBox x:Name="OverlayPackBox" Width="360" HorizontalAlignment="Left"
                     ToolTip.Tip="Optional second pack used only on Enter, Escape, and Space."/>
           <StackPanel x:Name="CustomSoundPanel" Spacing="8" IsVisible="False">
-            <TextBlock Text="Custom sound"
-                       ToolTip.Tip="Which file from your custom folder plays. Same file is used wherever Custom sample is assigned."/>
-            <ComboBox x:Name="CustomSoundBox" Width="360" HorizontalAlignment="Left"
-                      ToolTip.Tip="Which file from your custom folder plays. Same file is used wherever Custom sample is assigned."/>
-            <TextBlock Text="Files live in the custom folder on Packs. This choice is remembered for the app, not per profile."
+            <StackPanel Orientation="Horizontal" Spacing="6">
+              <TextBlock Text="Sound file"
+                         VerticalAlignment="Center"
+                         ToolTip.Tip="Which file from your My sounds folder plays. Same file is used wherever My sound is assigned."/>
+              <TextBlock Text="ⓘ" Opacity="0.55" VerticalAlignment="Center"
+                         ToolTip.Tip="Which file from your My sounds folder plays. Same file is used wherever My sound is assigned."/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <ComboBox x:Name="CustomSoundBox" Width="280" HorizontalAlignment="Left"
+                        ToolTip.Tip="Which file from your My sounds folder plays. Same file is used wherever My sound is assigned."/>
+              <Button x:Name="PreviewCustomSoundButton"
+                      Content="Preview"
+                      VerticalAlignment="Center"
+                      Click="OnPreviewCustomSound"
+                      ToolTip.Tip="Play the selected sound file once through your current output."/>
+            </StackPanel>
+            <TextBlock Text="Add files via Packs → Open My sounds folder. This file choice is remembered for the app, not per profile."
                        Opacity="0.65"
                        TextWrapping="Wrap"/>
           </StackPanel>
@@ -422,21 +468,30 @@
         <StackPanel x:Name="BehaviorPage" Spacing="12" IsVisible="False">
           <TextBlock Text="Behavior" FontSize="26" FontWeight="SemiBold"/>
           <TextBlock x:Name="BehaviorHint" Opacity="0.75" TextWrapping="Wrap"/>
-          <TextBlock Text="Key repeat" ToolTip.Tip="What happens if you hold a key. Off plays once. On follows Windows repeat. Rate limit caps how often it can fire."/>
+          <StackPanel Orientation="Horizontal" Spacing="6">
+            <TextBlock Text="Key repeat" ToolTip.Tip="What happens if you hold a key. Off plays once. On follows Windows repeat. Rate limit caps how often it can fire."/>
+            <TextBlock Text="ⓘ" Opacity="0.55" ToolTip.Tip="What happens if you hold a key. Off plays once. On follows Windows repeat. Rate limit caps how often it can fire."/>
+          </StackPanel>
           <ComboBox x:Name="RepeatBox" Width="220" HorizontalAlignment="Left"
                     ToolTip.Tip="What happens if you hold a key. Off plays once. On follows Windows repeat. Rate limit caps how often it can fire.">
             <ComboBoxItem Content="Off" Tag="Off"/>
             <ComboBoxItem Content="On" Tag="On"/>
             <ComboBoxItem Content="Rate limit" Tag="RateLimit"/>
           </ComboBox>
-          <TextBlock Text="Play on" ToolTip.Tip="Which edge of the keystroke makes sound: press, release, or both."/>
+          <StackPanel Orientation="Horizontal" Spacing="6">
+            <TextBlock Text="Play on" ToolTip.Tip="Which edge of the keystroke makes sound: press, release, or both."/>
+            <TextBlock Text="ⓘ" Opacity="0.55" ToolTip.Tip="Which edge of the keystroke makes sound: press, release, or both."/>
+          </StackPanel>
           <ComboBox x:Name="PlayOnBox" Width="220" HorizontalAlignment="Left"
                     ToolTip.Tip="Which edge of the keystroke makes sound: press, release, or both.">
             <ComboBoxItem Content="Key down" Tag="Down"/>
             <ComboBoxItem Content="Key up" Tag="Up"/>
             <ComboBoxItem Content="Both" Tag="Both"/>
           </ComboBox>
-          <TextBlock Text="Modifiers (Ctrl / Alt / Win)" ToolTip.Tip="Ignore keeps shortcuts like Ctrl+C silent. Play anyway sounds even during shortcuts."/>
+          <StackPanel Orientation="Horizontal" Spacing="6">
+            <TextBlock Text="Modifiers (Ctrl / Alt / Win)" ToolTip.Tip="Ignore keeps shortcuts like Ctrl+C silent. Play anyway sounds even during shortcuts."/>
+            <TextBlock Text="ⓘ" Opacity="0.55" ToolTip.Tip="Ignore keeps shortcuts like Ctrl+C silent. Play anyway sounds even during shortcuts."/>
+          </StackPanel>
           <ComboBox x:Name="ModifierBox" Width="220" HorizontalAlignment="Left"
                     ToolTip.Tip="Ignore keeps shortcuts like Ctrl+C silent. Play anyway sounds even during shortcuts.">
             <ComboBoxItem Content="Ignore shortcuts" Tag="Ignore"/>
@@ -444,6 +499,7 @@
           </ComboBox>
           <StackPanel Orientation="Horizontal" Spacing="12">
             <TextBlock Text="Polyphony" VerticalAlignment="Center" ToolTip.Tip="How many overlapping sounds are allowed. Lower is lighter on the CPU."/>
+            <TextBlock Text="ⓘ" Opacity="0.55" VerticalAlignment="Center" ToolTip.Tip="How many overlapping sounds are allowed. Lower is lighter on the CPU."/>
             <Slider x:Name="PolyphonySlider" Minimum="1" Maximum="64" Width="200" VerticalAlignment="Center"
                     ToolTip.Tip="How many overlapping sounds are allowed. Lower is lighter on the CPU."/>
             <TextBlock x:Name="PolyphonyLabel" VerticalAlignment="Center"/>
@@ -451,32 +507,31 @@
           <StackPanel Orientation="Horizontal" Spacing="12">
             <TextBlock Text="Velocity variation" VerticalAlignment="Center"
                        ToolTip.Tip="Random loudness per key so chords and fast typing don’t sound like one cloned hit."/>
+            <TextBlock Text="ⓘ" Opacity="0.55" VerticalAlignment="Center"
+                       ToolTip.Tip="Random loudness per key so chords and fast typing don’t sound like one cloned hit."/>
             <Slider x:Name="BehaviorVelocitySlider" Minimum="0" Maximum="50" Width="200" VerticalAlignment="Center"
                     ToolTip.Tip="Random loudness per key so chords and fast typing don’t sound like one cloned hit."/>
             <TextBlock x:Name="BehaviorVelocityLabel" VerticalAlignment="Center"/>
           </StackPanel>
-          <CheckBox x:Name="HoldSustainBox"
-                    Content="Hold sustain (piano)"
-                    ToolTip.Tip="While a piano key is held, the tone keeps ringing. Release fades it out. Clicks ignore this."/>
-          <StackPanel Orientation="Horizontal" Spacing="12">
-            <TextBlock Text="Release" VerticalAlignment="Center"
-                       ToolTip.Tip="How long the piano note fades after you let go when hold sustain is on."/>
-            <Slider x:Name="ReleaseSlider" Minimum="40" Maximum="1200" Width="200" VerticalAlignment="Center"
-                    ToolTip.Tip="How long the piano note fades after you let go when hold sustain is on."/>
-            <TextBlock x:Name="ReleaseLabel" VerticalAlignment="Center"/>
-          </StackPanel>
           <CheckBox x:Name="SilenceUnmappedBox" Content="Silence keys this pack does not map"
                     ToolTip.Tip="If the pack has no sample for a key, stay quiet even when a fallback would have played."/>
-          <TextBlock Text="Silence groups — tick any combination. Those keys stay quiet even if the pack has a fallback."
-                     Opacity="0.75"
-                     TextWrapping="Wrap"
-                     ToolTip.Tip="Combine groups. Function, modifiers, numpad, and navigation can all be muted together."/>
+          <StackPanel Orientation="Horizontal" Spacing="6">
+            <TextBlock Text="Silence groups — tick any combination. Those keys stay quiet even if the pack has a fallback."
+                       Opacity="0.75"
+                       TextWrapping="Wrap"
+                       ToolTip.Tip="Combine groups. Function, modifiers, numpad, and navigation can all be muted together."/>
+            <TextBlock Text="ⓘ" Opacity="0.55" VerticalAlignment="Top"
+                       ToolTip.Tip="Combine groups. Function, modifiers, numpad, and navigation can all be muted together."/>
+          </StackPanel>
           <CheckBox x:Name="SilentFunctionBox" Content="Function keys (F1–F12)" ToolTip.Tip="Mute F1–F12."/>
           <CheckBox x:Name="SilentModifiersBox" Content="Modifiers (Shift, Ctrl, Alt, Win, Caps Lock)" ToolTip.Tip="Mute Shift, Ctrl, Alt, Win, and Caps Lock."/>
           <CheckBox x:Name="SilentNumpadBox" Content="Numpad" ToolTip.Tip="Mute the numeric keypad."/>
           <CheckBox x:Name="SilentNavigationBox" Content="Navigation (arrows, Home, End, Page, Insert, Delete)" ToolTip.Tip="Mute arrows, Home, End, Page Up/Down, Insert, and Delete."/>
-          <TextBlock Text="Extra silent keys (comma-separated names, e.g. Tab, Space)"
-                     ToolTip.Tip="Named keys from the catalog, comma-separated. Example: Tab, Space."/>
+          <StackPanel Orientation="Horizontal" Spacing="6">
+            <TextBlock Text="Extra silent keys (comma-separated names, e.g. Tab, Space)"
+                       ToolTip.Tip="Named keys from the catalog, comma-separated. Example: Tab, Space."/>
+            <TextBlock Text="ⓘ" Opacity="0.55" ToolTip.Tip="Named keys from the catalog, comma-separated. Example: Tab, Space."/>
+          </StackPanel>
           <TextBox x:Name="SilentKeysBox"
                    Width="360"
                    HorizontalAlignment="Left"
@@ -491,19 +546,17 @@
           <TextBlock Text="This is your library. Enable or disable a pack to show or hide it when picking a pack on a profile. Uninstall is only for packs you installed."
                      Opacity="0.8"
                      TextWrapping="Wrap"/>
-          <TextBlock Text="Custom samples" FontWeight="SemiBold" Margin="0,4,0,0"/>
-          <TextBlock Text="Drop files in the custom folder, then pick Custom sample on Profiles and choose the sound in the Custom sound list. Primary = every key. Overlay = Enter, Escape, Space."
+          <TextBlock Text="My sounds" FontWeight="SemiBold" Margin="0,4,0,0"/>
+          <TextBlock Text="Your own audio files for typing. Add them to the folder, then on Profiles choose My sound as primary or overlay and pick a Sound file (with Preview)."
                      Opacity="0.8"
                      TextWrapping="Wrap"/>
-          <Button Content="Open custom folder" HorizontalAlignment="Left" Click="OnOpenCustomSamples"/>
-          <StackPanel x:Name="CustomSampleRows" Spacing="8"/>
+          <TextBlock x:Name="MySoundsCount"
+                     Opacity="0.75"/>
+          <Button Content="Open My sounds folder" HorizontalAlignment="Left" Click="OnOpenCustomSamples"/>
           <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,8,0,0">
-            <Button Content="Install pack…" Click="OnInstallPack"/>
-            <Button Content="Open examples folder" Click="OnOpenExamples"/>
+            <Button Content="Install pack…" Click="OnInstallPack"
+                    ToolTip.Tip="Install a .kfxpack file into your library."/>
           </StackPanel>
-          <TextBlock x:Name="ExamplesHint"
-                     Opacity="0.7"
-                     TextWrapping="Wrap"/>
           <StackPanel x:Name="PackRows" Spacing="8"/>
         </StackPanel>
 
@@ -535,7 +588,7 @@
                      TextWrapping="Wrap"/>
           <Button Content="Remove local data…"
                   HorizontalAlignment="Left"
-                  ToolTip.Tip="Deletes profiles, packs, custom samples, and settings in AppData. The installed app stays until you uninstall from Windows Settings."
+                  ToolTip.Tip="Deletes profiles, packs, your sound files, and settings in AppData. The installed app stays until you uninstall from Windows Settings."
                   Click="OnRemoveLocalData"/>
           <TextBlock Text="Sounds will not play in Administrator windows unless this app is also elevated. We do not ask for admin."
                      Opacity="0.75"
@@ -551,7 +604,7 @@
           <TextBlock Text="Key FX Board"
                      FontSize="18"/>
           <TextBlock x:Name="VersionText"/>
-          <TextBlock Text="Code license: MIT. Factory audio is synthesized: click and piano. Custom samples are your files."
+          <TextBlock Text="Code license: MIT. Factory audio is synthesized: click and piano. My sounds are your own audio files."
                      TextWrapping="Wrap"
                      Opacity="0.8"/>
           <TextBlock Text="Privacy: we do not record keystrokes. The global hook only triggers a sound."

@@ -320,6 +320,10 @@ public partial class MainWindow : Window
         PacksPage.IsVisible = tag == "packs";
         SettingsPage.IsVisible = tag == "settings";
         AboutPage.IsVisible = tag == "about";
+        if (tag == "packs")
+        {
+            RefreshMySoundsCount();
+        }
     }
 
     private void OnOpenDataFolder(object? sender, RoutedEventArgs e)
@@ -394,21 +398,6 @@ public partial class MainWindow : Window
         await InstallPackFromPathAsync(files[0].Path.LocalPath);
     }
 
-    private void OnOpenExamples(object? sender, RoutedEventArgs e)
-    {
-        if (_runtime is null)
-        {
-            return;
-        }
-
-        Directory.CreateDirectory(_runtime.Paths.ExamplesDirectory);
-        Process.Start(new ProcessStartInfo
-        {
-            FileName = _runtime.Paths.ExamplesDirectory,
-            UseShellExecute = true
-        });
-    }
-
     private void RefreshPacks()
     {
         if (_runtime is null)
@@ -416,8 +405,7 @@ public partial class MainWindow : Window
             return;
         }
 
-        ExamplesHint.Text = $"Example packs are in {_runtime.Paths.ExamplesDirectory}";
-        RefreshCustomSamples();
+        RefreshMySoundsCount();
         PackRows.Children.Clear();
         foreach (var pack in _runtime.Packs)
         {
@@ -430,69 +418,19 @@ public partial class MainWindow : Window
         }
     }
 
-    private void RefreshCustomSamples()
+    private void RefreshMySoundsCount()
     {
         if (_runtime is null)
         {
             return;
         }
 
-        CustomSampleRows.Children.Clear();
-        var files = CustomSampleLibrary.ListFiles(_runtime.Paths);
-        if (files.Count == 0)
-        {
-            CustomSampleRows.Children.Add(new TextBlock
-            {
-                Text = "No files yet. Open the folder and drop a WAV, MP3, or other Windows-decodable audio file.",
-                Opacity = 0.7,
-                TextWrapping = TextWrapping.Wrap
-            });
-            return;
-        }
-
-        var armed = Path.GetFileName(CustomSampleLibrary.ResolveArmed(_runtime.Paths, _runtime.Settings.ArmedSampleFile) ?? "");
-        foreach (var path in files)
-        {
-            CustomSampleRows.Children.Add(CreateCustomSampleRow(path, Path.GetFileName(path).Equals(armed, StringComparison.OrdinalIgnoreCase)));
-        }
-    }
-
-    private Control CreateCustomSampleRow(string path, bool armed)
-    {
-        var name = Path.GetFileName(path);
-        var title = new TextBlock
-        {
-            Text = name + (armed ? "  ·  armed" : ""),
-            FontWeight = FontWeight.SemiBold,
-            VerticalAlignment = VerticalAlignment.Center
-        };
-        var arm = new Button { Content = armed ? "Armed" : "Arm", IsEnabled = !armed };
-        arm.Click += (_, _) =>
-        {
-            _runtime!.ArmSample(name);
-            RefreshPacks();
-            RefreshProfiles();
-        };
-        var preview = new Button { Content = "Preview" };
-        preview.Click += async (_, _) =>
-        {
-            try
-            {
-                _runtime!.PreviewCustomSample(name);
-            }
-            catch (Exception ex)
-            {
-                await MessageDialog.Alert(this, "Could not preview", ex.Message);
-            }
-        };
-        var buttons = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8 };
-        buttons.Children.Add(arm);
-        buttons.Children.Add(preview);
-        var row = new DockPanel { LastChildFill = true };
-        DockPanel.SetDock(buttons, Dock.Right);
-        row.Children.Add(buttons);
-        row.Children.Add(title);
-        return row;
+        var count = CustomSampleLibrary.ListFiles(_runtime.Paths).Count;
+        MySoundsCount.Text = count == 0
+            ? "0 files in folder"
+            : count == 1
+                ? "1 file in folder"
+                : $"{count} files in folder";
     }
 
     private void OnOpenCustomSamples(object? sender, RoutedEventArgs e)
@@ -508,6 +446,7 @@ public partial class MainWindow : Window
             FileName = _runtime.Paths.CustomSamplesDirectory,
             UseShellExecute = true
         });
+        RefreshMySoundsCount();
     }
 
     private Control CreatePackRow(InstalledPack pack)
@@ -900,15 +839,17 @@ public partial class MainWindow : Window
         CustomSoundBox.Items.Clear();
         if (!show)
         {
+            PreviewCustomSoundButton.IsEnabled = false;
             return;
         }
 
         var files = CustomSampleLibrary.ListFiles(_runtime.Paths);
         if (files.Count == 0)
         {
-            CustomSoundBox.Items.Add(new ComboBoxItem { Content = "(no files in the custom folder)", Tag = "" });
+            CustomSoundBox.Items.Add(new ComboBoxItem { Content = "(no files in My sounds folder)", Tag = "" });
             CustomSoundBox.SelectedIndex = 0;
             CustomSoundBox.IsEnabled = false;
+            PreviewCustomSoundButton.IsEnabled = false;
             return;
         }
 
@@ -927,6 +868,31 @@ public partial class MainWindow : Window
         }
 
         CustomSoundBox.SelectedItem = selected ?? CustomSoundBox.Items[0];
+        PreviewCustomSoundButton.IsEnabled = CustomSoundBox.IsEnabled &&
+            (CustomSoundBox.SelectedItem as ComboBoxItem)?.Tag is string tag && tag.Length > 0;
+    }
+
+    private async void OnPreviewCustomSound(object? sender, RoutedEventArgs e)
+    {
+        if (_runtime is null)
+        {
+            return;
+        }
+
+        if ((CustomSoundBox.SelectedItem as ComboBoxItem)?.Tag is not string file || file.Length == 0)
+        {
+            await MessageDialog.Alert(this, "No sound file", "Add files via Packs → Open My sounds folder, then pick a Sound file here.");
+            return;
+        }
+
+        try
+        {
+            _runtime.PreviewCustomSample(file);
+        }
+        catch (Exception ex)
+        {
+            await MessageDialog.Alert(this, "Could not preview", ex.Message);
+        }
     }
 
     private void OnCustomSoundChanged(object? sender, SelectionChangedEventArgs e)
@@ -939,6 +905,11 @@ public partial class MainWindow : Window
         if ((CustomSoundBox.SelectedItem as ComboBoxItem)?.Tag is string file && file.Length > 0)
         {
             _runtime.ArmSample(file);
+            PreviewCustomSoundButton.IsEnabled = !_runtime.PianoMode;
+        }
+        else
+        {
+            PreviewCustomSoundButton.IsEnabled = false;
         }
     }
 
@@ -1041,7 +1012,7 @@ public partial class MainWindow : Window
         }
 
         BeginUiLoad();
-        BehaviorHint.Text = "When keys fire. Silence groups can be combined. Changes are live until you Save.";
+        BehaviorHint.Text = "When keys fire for typing packs. Hover ⓘ for details. Changes are live until you Save. Piano sustain is under Instruments → Piano settings.";
         SelectTag(RepeatBox, profile.Behavior.Repeat.ToString());
         SelectTag(PlayOnBox, profile.Behavior.PlayOn.ToString());
         SelectTag(ModifierBox, profile.Behavior.ModifierPolicy.ToString());
@@ -1049,9 +1020,6 @@ public partial class MainWindow : Window
         PolyphonyLabel.Text = profile.Behavior.Polyphony.ToString();
         BehaviorVelocitySlider.Value = profile.Behavior.VelocityRandom * 100;
         BehaviorVelocityLabel.Text = $"{(int)BehaviorVelocitySlider.Value}%";
-        HoldSustainBox.IsChecked = profile.Behavior.HoldSustain;
-        ReleaseSlider.Value = Math.Clamp(profile.Behavior.ReleaseMs, 40, 1200);
-        ReleaseLabel.Text = $"{(int)ReleaseSlider.Value} ms";
         SilenceUnmappedBox.IsChecked = profile.Behavior.SilenceUnmapped;
         SilentFunctionBox.IsChecked = HasSilentGroup(profile, "function");
         SilentModifiersBox.IsChecked = HasSilentGroup(profile, "modifiers");
@@ -1068,10 +1036,6 @@ public partial class MainWindow : Window
         BehaviorVelocitySlider.PropertyChanged -= OnBehaviorSlider;
         PolyphonySlider.PropertyChanged += OnBehaviorSlider;
         BehaviorVelocitySlider.PropertyChanged += OnBehaviorSlider;
-        ReleaseSlider.PropertyChanged -= OnBehaviorSlider;
-        ReleaseSlider.PropertyChanged += OnBehaviorSlider;
-        HoldSustainBox.IsCheckedChanged -= OnBehaviorChangedRouted;
-        HoldSustainBox.IsCheckedChanged += OnBehaviorChangedRouted;
         SilenceUnmappedBox.IsCheckedChanged -= OnBehaviorChangedRouted;
         SilentFunctionBox.IsCheckedChanged -= OnBehaviorChangedRouted;
         SilentModifiersBox.IsCheckedChanged -= OnBehaviorChangedRouted;
@@ -1117,7 +1081,6 @@ public partial class MainWindow : Window
         {
             PolyphonyLabel.Text = ((int)PolyphonySlider.Value).ToString();
             BehaviorVelocityLabel.Text = $"{(int)BehaviorVelocitySlider.Value}%";
-            ReleaseLabel.Text = $"{(int)ReleaseSlider.Value} ms";
             SaveBehavior();
         }
     }
@@ -1134,8 +1097,6 @@ public partial class MainWindow : Window
         profile.Behavior.ModifierPolicy = ParseEnum((ModifierBox.SelectedItem as ComboBoxItem)?.Tag as string, ModifierPolicy.Ignore);
         profile.Behavior.Polyphony = Math.Clamp((int)PolyphonySlider.Value, 1, 64);
         profile.Behavior.VelocityRandom = (float)(BehaviorVelocitySlider.Value / 100.0);
-        profile.Behavior.HoldSustain = HoldSustainBox.IsChecked == true;
-        profile.Behavior.ReleaseMs = Math.Clamp((float)ReleaseSlider.Value, 40, 1200);
         profile.Behavior.SilenceUnmapped = SilenceUnmappedBox.IsChecked == true;
         profile.Behavior.SilentGroups = CollectSilentGroups();
         profile.Behavior.SilentKeys = ParseSilentKeys(SilentKeysBox.Text);
@@ -1475,14 +1436,18 @@ public partial class MainWindow : Window
         var on = _runtime.PianoMode;
         PianoOnBanner.IsVisible = on;
         InstrumentsToggleButton.Content = on ? "Stop piano" : "Start piano";
+        PianoStatusLabel.Text = on ? "On" : "Off";
         InstrumentsStatus.Text = on
-            ? "Piano is on. Closing the map does not stop it — only Stop does."
-            : "Start piano to play the computer keyboard as an instrument. Your profile packs stay until you Stop. Closing the map does not stop piano.";
+            ? "Piano is on. Closing the map does not stop it — only Stop does. Starting another instrument later will replace this one."
+            : "Start an instrument to play the computer keyboard as that instrument. Your profile packs stay until you Stop. Closing a map does not stop the instrument.";
         PrimaryPackBox.IsEnabled = !on;
         OverlayPackBox.IsEnabled = !on;
         if (CustomSoundPanel.IsVisible)
         {
-            CustomSoundBox.IsEnabled = !on && CustomSampleLibrary.ListFiles(_runtime.Paths).Count > 0;
+            var hasFiles = CustomSampleLibrary.ListFiles(_runtime.Paths).Count > 0;
+            CustomSoundBox.IsEnabled = !on && hasFiles;
+            PreviewCustomSoundButton.IsEnabled = CustomSoundBox.IsEnabled &&
+                (CustomSoundBox.SelectedItem as ComboBoxItem)?.Tag is string tag && tag.Length > 0;
         }
     }
 
@@ -1527,6 +1492,18 @@ public partial class MainWindow : Window
 
     private void OnOpenPianoMap(object? sender, RoutedEventArgs e) => ShowPianoMap();
 
+    private async void OnOpenPianoSettings(object? sender, RoutedEventArgs e)
+    {
+        if (_runtime is null)
+        {
+            return;
+        }
+
+        var dialog = new PianoSettingsWindow(_runtime);
+        await dialog.ShowDialog(this);
+        RefreshSaveButtons();
+    }
+
     private async void OnCheckForUpdates(object? sender, RoutedEventArgs e)
     {
         UpdateStatusText.Text = "Checking for updates…";
@@ -1559,7 +1536,7 @@ public partial class MainWindow : Window
         if (!await MessageDialog.Confirm(
                 this,
                 "Remove local data?",
-                "This deletes profiles, packs, custom samples, and settings in AppData. The installed program stays until you uninstall Key FX Board from Windows Settings. The app will quit.",
+                "This deletes profiles, packs, your sound files, and settings in AppData. The installed program stays until you uninstall Key FX Board from Windows Settings. The app will quit.",
                 "Remove and quit"))
         {
             return;

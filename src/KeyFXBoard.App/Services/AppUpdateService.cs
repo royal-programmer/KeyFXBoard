@@ -65,7 +65,7 @@ public static class AppUpdateService
             var target = info.TargetFullRelease.Version.ToString();
             var ok = await confirmAsync(
                 "Update available",
-                $"Version {target} is ready to download and install. The app will restart. Your profiles, packs, and custom samples stay.",
+                $"Version {target} is ready to download and install. The app will restart. Your profiles, packs, and sound files stay.",
                 "Update and restart");
             if (!ok)
             {

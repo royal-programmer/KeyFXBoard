@@ -27,7 +27,7 @@
                Opacity="0.8"
                TextWrapping="Wrap"
                Margin="0,0,0,10"
-               Text="Each piano key shows the computer key that plays it at the current octave. Page Down / Page Up shift the whole map. Home / End return to A-row = C4. Click a key to hear it."/>
+               Text="Z-row = C3, A-row = C4, Q-row = C5 at the default octave. Each piano key shows the computer key that plays it. Page Down / Page Up shift the whole map (±1 octave). Home / End return to A-row = C4. Range C2–C6. Click a key to hear it."/>
     <StackPanel DockPanel.Dock="Bottom" Spacing="8" Margin="0,12,0,0">
       <StackPanel Orientation="Horizontal" Spacing="16">
         <TextBlock x:Name="OctaveHint" Opacity="0.85"/>
