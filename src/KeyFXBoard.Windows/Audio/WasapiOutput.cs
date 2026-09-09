@@ -8,7 +8,6 @@ namespace KeyFXBoard.Windows.Audio;
 
 public sealed class WasapiOutput : IAudioOutput
 {
-    private readonly int _latencyMs;
     private readonly MMDeviceEnumerator _notifications = new();
     private readonly DeviceChangeClient _client;
     private readonly System.Threading.Timer _debounce;
@@ -18,7 +17,7 @@ public sealed class WasapiOutput : IAudioOutput
 
     public WasapiOutput(int latencyMs = 20)
     {
-        _latencyMs = latencyMs;
+        LatencyMs = Math.Clamp(latencyMs, 5, 100);
         _client = new DeviceChangeClient(ScheduleDeviceRefresh);
         _debounce = new System.Threading.Timer(_ =>
         {
@@ -45,6 +44,7 @@ public sealed class WasapiOutput : IAudioOutput
     public string DeviceId { get; private set; } = AudioDeviceInfo.DefaultId;
     public string DeviceName { get; private set; } = "Windows default";
     public string? StartWarning { get; private set; }
+    public int LatencyMs { get; set; } = 20;
     public event Action? DevicesChanged;
 
     public IReadOnlyList<AudioDeviceInfo> ListDevices()
@@ -91,7 +91,8 @@ public sealed class WasapiOutput : IAudioOutput
             : _device.FriendlyName;
 
         _provider = new EngineSampleProvider(fill);
-        _output = new NAudio.Wave.WasapiOut(_device, AudioClientShareMode.Shared, useEventSync: true, _latencyMs);
+        var latency = Math.Clamp(LatencyMs, 5, 100);
+        _output = new NAudio.Wave.WasapiOut(_device, AudioClientShareMode.Shared, useEventSync: true, latency);
         _output.Init(_provider);
         _output.Play();
     }

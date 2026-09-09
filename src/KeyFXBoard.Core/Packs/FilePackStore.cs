@@ -54,6 +54,13 @@ public sealed class FilePackStore
             throw new PackException("Choose a .kfxpack file.");
         }
 
+        var length = new FileInfo(packFile).Length;
+        if (length > PackPathRules.MaxPackArchiveBytes)
+        {
+            throw new PackException(
+                $"Pack is too large ({length / (1024 * 1024)} MB). Limit is {PackPathRules.MaxPackArchiveBytes / (1024 * 1024)} MB.");
+        }
+
         var staging = Path.Combine(_paths.PacksDirectory, $".partial-{Guid.NewGuid():N}");
         try
         {

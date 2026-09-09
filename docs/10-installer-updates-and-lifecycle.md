@@ -8,21 +8,21 @@ v1 ships a **self-contained** `win-x64` build packed with Velopack (`scripts/pac
 
 Artifacts:
 
-- `KeyFXBoard-win-Setup.exe` — one-click (splash + progress). No path wizard.
-- `.msi` — Windows wizard: install scope (per-user AppData vs per-machine), license, readme, Finish. Needs WiX via `vpk pack --msi`.
+- `KeyFXBoard-win-Setup.exe` — one-click (splash + progress). No path wizard. Per-user.
+- `.msi` — Windows wizard: license, readme, Finish. **Per-user only** (`--instLocation PerUser`) — no admin UAC. Needs WiX via `vpk pack --msi`.
 - Getting started HTML next to the app: `GettingStarted.html`
 
-Default per-user location: `%LocalAppData%\KeyFXBoard`. Shortcuts: Desktop + Start menu.
+Default install location: `%LocalAppData%\KeyFXBoard`. Shortcuts: Desktop + Start menu. Profiles/packs stay in `%AppData%\KeyFXBoard`.
 
 Installer should:
 
-- Place binaries under Velopack’s default per-user location (`%LocalAppData%\KeyFXBoard` unless we choose otherwise)
+- Place binaries under Velopack’s per-user location (`%LocalAppData%\KeyFXBoard`)
 - Create Start menu shortcut
 - Register Add/Remove Programs
 - Optionally register `.kfxpack` file association → `KeyFXBoard.exe --install-pack "%1"`
 - Launch the app after setup
 
-No admin required for the default per-user install. That matches the hook (user session) and avoids UAC on every update.
+No admin required. That matches the hook (user session) and avoids UAC on every update. Custom install folders are not offered in the MSI wizard (Velopack OTA expects a stable layout); admins can still override MSI with `VELOPACK_INSTALLDIR` if needed.
 
 ## App uninstall
 

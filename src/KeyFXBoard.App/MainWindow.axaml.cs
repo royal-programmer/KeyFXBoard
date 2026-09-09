@@ -8,6 +8,7 @@ using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using KeyFXBoard.App.Services;
 using KeyFXBoard.Core.Abstractions;
+using KeyFXBoard.Core.Audio;
 using KeyFXBoard.Core.Filtering;
 using KeyFXBoard.Core.Packs;
 using KeyFXBoard.Core.Profiles;
@@ -222,6 +223,7 @@ public partial class MainWindow : Window
 
         FillOutputCombo(HomeOutputBox);
         FillOutputCombo(SettingsOutputBox);
+        FillBufferPresetCombo();
 
         var failed = _runtime.HookError ?? _runtime.AudioError ?? _runtime.PackError;
         ErrorBanner.IsVisible = failed is not null;
@@ -326,6 +328,50 @@ public partial class MainWindow : Window
         }
     }
 
+    private void FillBufferPresetCombo()
+    {
+        if (_runtime is null)
+        {
+            return;
+        }
+
+        BufferPresetBox.SelectionChanged -= OnBufferPresetChanged;
+        if (BufferPresetBox.Items.Count == 0)
+        {
+            foreach (var (id, label, _) in BufferPresets.All)
+            {
+                BufferPresetBox.Items.Add(new ComboBoxItem { Content = label, Tag = id });
+            }
+        }
+
+        var wanted = BufferPresets.Normalize(_runtime.Settings.BufferPreset);
+        foreach (var item in BufferPresetBox.Items)
+        {
+            if (item is ComboBoxItem combo &&
+                combo.Tag is string id &&
+                id.Equals(wanted, StringComparison.OrdinalIgnoreCase))
+            {
+                BufferPresetBox.SelectedItem = combo;
+                break;
+            }
+        }
+
+        BufferPresetBox.SelectionChanged += OnBufferPresetChanged;
+    }
+
+    private void OnBufferPresetChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        if (_syncing || _runtime is null)
+        {
+            return;
+        }
+
+        if ((BufferPresetBox.SelectedItem as ComboBoxItem)?.Tag is string id)
+        {
+            _runtime.SetBufferPreset(id);
+        }
+    }
+
     private void OnOpenDataFolder(object? sender, RoutedEventArgs e)
     {
         if (_runtime is null)
@@ -337,6 +383,20 @@ public partial class MainWindow : Window
         Process.Start(new ProcessStartInfo
         {
             FileName = _runtime.Paths.Root,
+            UseShellExecute = true
+        });
+    }
+
+    private void OnOpenLogsFolder(object? sender, RoutedEventArgs e)
+    {
+        var dir = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+            "KeyFXBoard",
+            "logs");
+        Directory.CreateDirectory(dir);
+        Process.Start(new ProcessStartInfo
+        {
+            FileName = dir,
             UseShellExecute = true
         });
     }
@@ -1618,7 +1678,7 @@ public partial class MainWindow : Window
         if (!await MessageDialog.Confirm(
                 this,
                 "Reset app settings?",
-                "Restore volume, boost, mute, output device, autostart, and tray options to defaults. Profiles and packs stay as they are."))
+                "Restore volume, boost, mute, output device, buffer, autostart, and tray options to defaults. Profiles and packs stay as they are."))
         {
             return;
         }

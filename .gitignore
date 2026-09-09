@@ -13,4 +13,5 @@
 *.nupkg
 artifacts/
 publish/
+installer/LICENSE.txt
 *.log

@@ -13,7 +13,7 @@ if (-not (Test-Path (Join-Path $Root "KeyFXBoard.sln"))) {
   $Root = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 }
 
-$Version = "0.1.1"
+$Version = "0.1.2"
 $props = Join-Path $Root "Directory.Build.props"
 if (Test-Path $props) {
   $match = Select-String -Path $props -Pattern "<Version>([^<]+)</Version>" | Select-Object -First 1
@@ -29,6 +29,15 @@ $Splash = Join-Path $Root "src\KeyFXBoard.App\Assets\app-icon.png"
 
 Write-Host "Publishing KeyFXBoard $Version (win-x64 self-contained)..."
 if (Test-Path $Publish) { Remove-Item $Publish -Recurse -Force }
+
+# Prefer user-local SDK (e.g. .NET 10) for publish; vpk may need system .NET 9 runtime.
+$userDotnet = Join-Path $env:USERPROFILE ".dotnet\dotnet.exe"
+$systemDotnetRoot = "C:\Program Files\dotnet"
+if (Test-Path $userDotnet) {
+  $env:DOTNET_ROOT = Join-Path $env:USERPROFILE ".dotnet"
+  $env:PATH = "$env:DOTNET_ROOT;$env:PATH"
+}
+
 dotnet publish $Project -c Release -r win-x64 --self-contained true -o $Publish
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
@@ -40,6 +49,16 @@ Copy-Item $Splash (Join-Path $Publish "Assets\app-icon.png") -Force
 
 Write-Host "Packing with Velopack (vpk)..."
 New-Item -ItemType Directory -Force -Path $Releases | Out-Null
+
+# Velopack MSI requires license path with .txt / .md / .rtf extension
+$LicenseForMsi = Join-Path $Installer "LICENSE.txt"
+Copy-Item (Join-Path $Root "LICENSE") $LicenseForMsi -Force
+
+# vpk (global tool) often targets net9; point DOTNET_ROOT at system runtimes when present.
+if (Test-Path (Join-Path $systemDotnetRoot "dotnet.exe")) {
+  $env:DOTNET_ROOT = $systemDotnetRoot
+  $env:PATH = "$systemDotnetRoot;$env:USERPROFILE\.dotnet\tools;$env:PATH"
+}
 
 $packArgs = @(
   "pack",
@@ -54,22 +73,22 @@ $packArgs = @(
   "--shortcuts", "Desktop,StartMenuRoot",
   "--outputDir", $Releases,
   "--instWelcome", (Join-Path $Installer "welcome.md"),
-  "--instLicense", (Join-Path $Root "LICENSE"),
+  "--instLicense", $LicenseForMsi,
   "--instReadme", (Join-Path $Installer "readme.md"),
   "--instConclusion", (Join-Path $Installer "conclusion.md"),
   "--msi",
-  "--instLocation", "Either"
+  "--instLocation", "PerUser"
 )
 
 & vpk @packArgs
 if ($LASTEXITCODE -ne 0) {
   Write-Host "MSI pack failed (WiX may be missing). Packing Setup.exe only..."
-  $packArgs = $packArgs | Where-Object { $_ -notin @("--msi", "--instLocation", "Either") }
+  $packArgs = $packArgs | Where-Object { $_ -notin @("--msi", "--instLocation", "PerUser") }
   & vpk @packArgs
   if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 }
 
 Write-Host ""
-Write-Host "Done. Prefer the .msi if present (path picker, license, readme, finish)."
+Write-Host "Done. MSI is per-user (no admin): %LocalAppData%\KeyFXBoard."
 Write-Host "  Folder: $Releases"
-Write-Host "  Default per-user location is %LocalAppData%\KeyFXBoard (not Program Files)."
+Write-Host "  Setup.exe is also one-click per-user."

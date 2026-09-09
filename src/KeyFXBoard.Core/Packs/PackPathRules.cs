@@ -7,6 +7,9 @@ public static class PackPathRules
     public static readonly Regex PackIdPattern = new("^[a-z0-9-]{2,64}$", RegexOptions.CultureInvariant | RegexOptions.Compiled);
     public const long MaxSampleBytes = 8L * 1024 * 1024;
     public const long MaxDecodedBytes = 64L * 1024 * 1024;
+    public const long MaxPackArchiveBytes = 80L * 1024 * 1024;
+    public const long MaxPackUncompressedBytes = 160L * 1024 * 1024;
+    public const int MaxPackEntries = 4000;
 
     private static readonly HashSet<string> SeededIds = new(StringComparer.OrdinalIgnoreCase)
     {

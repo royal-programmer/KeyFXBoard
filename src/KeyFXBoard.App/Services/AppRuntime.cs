@@ -31,9 +31,10 @@ public sealed class AppRuntime : IDisposable
         _packs = new FilePackStore(Paths);
         _profiles = new JsonProfileStore(Paths);
         Settings = _store.Load();
+        Settings.BufferPreset = BufferPresets.Normalize(Settings.BufferPreset);
         Engine = new Engine();
         Keyboard = new LowLevelKeyboardSource();
-        Audio = new WasapiOutput();
+        Audio = new WasapiOutput(BufferPresets.LatencyMs(Settings.BufferPreset));
         Audio.DevicesChanged += OnDevicesChanged;
     }
 
@@ -156,11 +157,15 @@ public sealed class AppRuntime : IDisposable
         try
         {
             Keyboard.Start(Engine.Handle);
+            AppLog.Info("Hook", "Keyboard hook attached.");
         }
         catch (Exception ex)
         {
             HookError = ex.Message;
+            AppLog.Error("Hook", "Keyboard hook failed.", ex);
         }
+
+        AppLog.Info("Runtime", $"Started. Buffer={Settings.BufferPreset} Device={Audio.DeviceId}");
     }
 
     public IReadOnlyList<AudioDeviceInfo> ListAudioDevices() => Audio.ListDevices();
@@ -179,14 +184,19 @@ public sealed class AppRuntime : IDisposable
                 var missing = !devices.Any(d => d.Id.Equals(wanted, StringComparison.OrdinalIgnoreCase));
                 if (followDefault || missing)
                 {
+                    if (missing && !followDefault)
+                    {
+                        AppLog.Warn("Audio", "Saved output device missing; restarting audio with fallback.");
+                    }
+
                     StartAudio();
                 }
 
                 AudioChanged?.Invoke();
             }
-            catch
+            catch (Exception ex)
             {
-                // Device enumeration can race with unplug.
+                AppLog.Warn("Audio", $"Device change handling failed: {ex.Message}");
             }
         });
     }
@@ -196,6 +206,17 @@ public sealed class AppRuntime : IDisposable
         Settings.AudioDeviceId = string.IsNullOrWhiteSpace(deviceId) ? AudioDeviceInfo.DefaultId : deviceId;
         Save();
         StartAudio();
+        AppLog.Info("Audio", $"Output set to {Settings.AudioDeviceId}.");
+        AudioChanged?.Invoke();
+    }
+
+    public void SetBufferPreset(string preset)
+    {
+        Settings.BufferPreset = BufferPresets.Normalize(preset);
+        Audio.LatencyMs = BufferPresets.LatencyMs(Settings.BufferPreset);
+        Save();
+        StartAudio();
+        AppLog.Info("Audio", $"Buffer preset {Settings.BufferPreset} ({Audio.LatencyMs} ms).");
         AudioChanged?.Invoke();
     }
 
@@ -253,12 +274,33 @@ public sealed class AppRuntime : IDisposable
         AudioWarning = null;
         try
         {
+            Audio.LatencyMs = BufferPresets.LatencyMs(Settings.BufferPreset);
             Audio.Start(Engine.FillBuffer, Settings.AudioDeviceId);
             AudioWarning = Audio.StartWarning;
+            if (AudioWarning is not null)
+            {
+                AppLog.Warn("Audio", AudioWarning);
+            }
         }
         catch (Exception ex)
         {
             AudioError = ex.Message;
+            AppLog.Error("Audio", "Audio start failed.", ex);
+            try
+            {
+                if (!string.Equals(Settings.AudioDeviceId, AudioDeviceInfo.DefaultId, StringComparison.OrdinalIgnoreCase))
+                {
+                    AppLog.Warn("Audio", "Retrying with Windows default output.");
+                    Audio.Start(Engine.FillBuffer, AudioDeviceInfo.DefaultId);
+                    AudioError = null;
+                    AudioWarning = "Could not open the saved output. Using Windows default.";
+                }
+            }
+            catch (Exception retryEx)
+            {
+                AudioError = retryEx.Message;
+                AppLog.Error("Audio", "Audio fallback failed.", retryEx);
+            }
         }
     }
 
@@ -293,9 +335,11 @@ public sealed class AppRuntime : IDisposable
         Settings.Volume = 0.7f;
         Settings.AudioDeviceId = AudioDeviceInfo.DefaultId;
         Settings.OutputBoostDb = 0;
+        Settings.BufferPreset = BufferPresets.Stable;
         Engine.Muted = false;
         Engine.AppTrim = Settings.Volume;
         Engine.OutputBoost = 1f;
+        Audio.LatencyMs = BufferPresets.LatencyMs(Settings.BufferPreset);
         SetAutostart(false);
         StartAudio();
         Save();
@@ -363,20 +407,29 @@ public sealed class AppRuntime : IDisposable
 
     public InstalledPack InstallPack(string packFile, bool replaceExisting)
     {
-        var installed = _packs.Install(packFile, replaceExisting);
         try
         {
-            _ = PackLoader.Load(installed.Directory, WavDecoder.Decode);
+            var installed = _packs.Install(packFile, replaceExisting);
+            try
+            {
+                _ = PackLoader.Load(installed.Directory, WavDecoder.Decode);
+            }
+            catch
+            {
+                _packs.Uninstall(installed.Id);
+                throw;
+            }
+
+            AppLog.Info("Packs", $"Installed pack id={installed.Id} v={installed.Version}.");
+            PacksChanged?.Invoke();
+            ApplyWorking(forceReload: true);
+            return installed;
         }
-        catch
+        catch (Exception ex)
         {
-            _packs.Uninstall(installed.Id);
+            AppLog.Error("Packs", "Pack install failed.", ex);
             throw;
         }
-
-        PacksChanged?.Invoke();
-        ApplyWorking(forceReload: true);
-        return installed;
     }
 
     public void UninstallPack(string id)

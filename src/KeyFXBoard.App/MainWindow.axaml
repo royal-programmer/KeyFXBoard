@@ -565,6 +565,14 @@
           <TextBlock Text="Audio output" ToolTip.Tip="Only plugged-in playback devices. The list updates when you plug in or unplug. Windows default follows the Sound control panel."/>
           <ComboBox x:Name="SettingsOutputBox" Width="360" HorizontalAlignment="Left"
                     ToolTip.Tip="Only plugged-in playback devices. The list updates when you plug in or unplug. Windows default follows the Sound control panel."/>
+          <StackPanel Orientation="Horizontal" Spacing="6">
+            <TextBlock Text="Buffer" VerticalAlignment="Center"
+                       ToolTip.Tip="Lower latency feels tighter; higher is more stable on busy machines."/>
+            <TextBlock Text="ⓘ" Opacity="0.55" VerticalAlignment="Center"
+                       ToolTip.Tip="Lower latency feels tighter; higher is more stable on busy machines."/>
+          </StackPanel>
+          <ComboBox x:Name="BufferPresetBox" Width="280" HorizontalAlignment="Left"
+                    ToolTip.Tip="Lower latency feels tighter; higher is more stable on busy machines."/>
           <CheckBox x:Name="AutostartBox" Content="Start with Windows" ToolTip.Tip="Launch Key FX Board when you sign in."/>
           <CheckBox x:Name="CloseToTrayBox" Content="Close button hides to the tray" ToolTip.Tip="The window close button hides the app instead of quitting."/>
           <CheckBox x:Name="StartMinimizedBox" Content="Start in the tray after first run" ToolTip.Tip="After first run, open in the tray instead of showing the window."/>
@@ -577,12 +585,16 @@
                      TextWrapping="Wrap"/>
           <Button Content="Reset app settings"
                   HorizontalAlignment="Left"
-                  ToolTip.Tip="Restore volume, boost, mute, output device, autostart, and tray options. Profiles and packs stay."
+                  ToolTip.Tip="Restore volume, boost, mute, output device, buffer, autostart, and tray options. Profiles and packs stay."
                   Click="OnResetAppSettings"/>
           <Button x:Name="OpenDataButton"
                   Content="Open data folder"
                   HorizontalAlignment="Left"
                   Click="OnOpenDataFolder"/>
+          <Button Content="Open logs folder"
+                  HorizontalAlignment="Left"
+                  Click="OnOpenLogsFolder"
+                  ToolTip.Tip="app.log and crash.log — never contain what you typed."/>
           <TextBlock x:Name="DataPath"
                      Opacity="0.7"
                      TextWrapping="Wrap"/>
@@ -607,7 +619,7 @@
           <TextBlock Text="Code license: MIT. Factory audio is synthesized: click and piano. My sounds are your own audio files."
                      TextWrapping="Wrap"
                      Opacity="0.8"/>
-          <TextBlock Text="Privacy: we do not record keystrokes. The global hook only triggers a sound."
+          <TextBlock Text="Privacy: we do not record keystrokes. The global hook only triggers a sound. Logs never store what you type."
                      TextWrapping="Wrap"
                      Opacity="0.8"/>
           <Button Content="Open getting started"

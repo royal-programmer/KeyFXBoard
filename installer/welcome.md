@@ -1,7 +1,12 @@
 # Welcome to Key FX Board
 
-Type anywhere and hear a click, a custom sample, or a piano. Mute from the tray at any time.
+**Key FX Board** is a Windows tray app for typing sounds you can design — sound packs, profiles, a real FX rack, and instruments like piano.
 
-This installer lets you choose **per-user** (default: your AppData / Local AppData, no admin) or **per-machine** (Program Files, needs admin).
+### This install
 
-Desktop and Start menu shortcuts are created. You can remove them later like any other shortcut.
+- **Per-user only** — no administrator password
+- Installed under your Local AppData (`%LocalAppData%\KeyFXBoard`)
+- Desktop and Start menu shortcuts are created
+- Your profiles and packs live separately in `%AppData%\KeyFXBoard` and survive app updates
+
+Mute anytime from the tray. We do not record what you type.

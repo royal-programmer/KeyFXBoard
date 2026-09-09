@@ -8,8 +8,8 @@ Windows tray app for **typing sounds you can design** — sample packs, per-key 
 
 | Installer | Link |
 | --- | --- |
-| MSI (wizard) | [KeyFXBoard-win.msi](https://github.com/royal-programmer/KeyFXBoard/releases/download/v0.1.1/KeyFXBoard-win.msi) |
-| Setup (one-click) | [KeyFXBoard-win-Setup.exe](https://github.com/royal-programmer/KeyFXBoard/releases/download/v0.1.1/KeyFXBoard-win-Setup.exe) |
+| MSI (wizard) | [KeyFXBoard-win.msi](https://github.com/royal-programmer/KeyFXBoard/releases/download/v0.1.2/KeyFXBoard-win.msi) |
+| Setup (one-click) | [KeyFXBoard-win-Setup.exe](https://github.com/royal-programmer/KeyFXBoard/releases/download/v0.1.2/KeyFXBoard-win-Setup.exe) |
 
 All assets: [Releases](https://github.com/royal-programmer/KeyFXBoard/releases)
 

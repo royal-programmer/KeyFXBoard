@@ -41,8 +41,47 @@ public static class PackArchive
 
     public static void Extract(string packFile, string destination)
     {
+        var info = new FileInfo(packFile);
+        if (!info.Exists)
+        {
+            throw new PackException("Pack file was not found.");
+        }
+
+        if (info.Length > PackPathRules.MaxPackArchiveBytes)
+        {
+            throw new PackException(
+                $"Pack is too large ({info.Length / (1024 * 1024)} MB). Limit is {PackPathRules.MaxPackArchiveBytes / (1024 * 1024)} MB.");
+        }
+
         Directory.CreateDirectory(destination);
         using var zip = ZipFile.OpenRead(packFile);
+        if (zip.Entries.Count > PackPathRules.MaxPackEntries)
+        {
+            throw new PackException($"Pack has too many files (limit {PackPathRules.MaxPackEntries}).");
+        }
+
+        long uncompressed = 0;
+        foreach (var entry in zip.Entries)
+        {
+            var full = entry.FullName.Replace('\\', '/');
+            if (full.Split('/', StringSplitOptions.RemoveEmptyEntries).Any(part => part is ".."))
+            {
+                throw new PackException($"Unsafe path in pack: {entry.FullName}");
+            }
+
+            if (entry.Length < 0)
+            {
+                throw new PackException("Pack entry has an invalid size.");
+            }
+
+            uncompressed += entry.Length;
+            if (uncompressed > PackPathRules.MaxPackUncompressedBytes)
+            {
+                throw new PackException(
+                    $"Unpacked pack would be too large (limit {PackPathRules.MaxPackUncompressedBytes / (1024 * 1024)} MB).");
+            }
+        }
+
         var prefix = DetectSingleRootPrefix(zip);
 
         foreach (var entry in zip.Entries)
@@ -108,6 +147,11 @@ public static class PackArchive
         }
 
         var root = roots[0];
+        if (root is "." or "..")
+        {
+            return null;
+        }
+
         var hasNested = relatives.Any(name =>
             name.StartsWith(root + "/", StringComparison.OrdinalIgnoreCase));
         var hasRootFile = relatives.Any(name =>

@@ -85,14 +85,14 @@ This folder. Decisions in [Vision](01-vision-and-decisions.md) stay unless we ex
 
 ## Phase 7 — Harden
 
-- Logging without keys
+- Logging without keys (`app.log` + `crash.log` under AppData)
 - Pack size / zip-slip tests
-- Buffer preset
-- Device fallback
+- Buffer preset (Low latency / Stable / Safe)
+- Device fallback (missing device → Windows default + warning)
 - Crash hygiene
 - Icon pass, copy pass
 
-**Exit:** You would send someone the Setup.exe.
+**Exit:** You would send someone the Setup.exe (unsigned OK for early friends; paid Authenticode later).
 
 ## Later (designed, not scheduled)
 
